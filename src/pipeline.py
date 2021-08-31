@@ -12,6 +12,7 @@ from main03_get_parse_data import extract_pdata
 from main04_compute_auth import combine_auth, compute_statement_auth
 import pandas as pd
 
+pd.options.mode.chained_assignment = None  # default='warn'
 
 class Pipeline():
 	def __init__(self, args):
@@ -28,22 +29,22 @@ class Pipeline():
 		extract_pdata(self.args)
 
 	def compute_authority_measures(self):
-		chunks = os.listdir(os.path.join(args.output_directory, "03_pdata"))
+		chunks = os.listdir(os.path.join(self.args.output_directory, "03_pdata"))
 		chunks = sorted(chunks, key=lambda x: int(x.split("_")[-1][:-4]))
 		for filename in tqdm(chunks):
-			filepath = os.path.join(args.output_directory, "03_pdata", filename)
+			filepath = os.path.join(self.args.output_directory, "03_pdata", filename)
 			cur_df = pd.read_pickle(filepath)
-			compute_statement_auth(args, cur_df, filename)
-		combine_auth()
+			compute_statement_auth(self.args, cur_df, filename)
+		combine_auth(self.args)
 
 	def run_main(self):
 		# dependency parsing
-		#os.makedirs(os.path.join(self.args.output_directory, "02_parsed_articles"), exist_ok=True)
-		#self.parse_articles()
+		os.makedirs(os.path.join(self.args.output_directory, "02_parsed_articles"), exist_ok=True)
+		self.parse_articles()
 
 		# extract necessary parsed information
-		#os.makedirs(os.path.join(self.args.output_directory, "03_pdata"), exist_ok=True)
-		#self.extract_parsed_data()
+		os.makedirs(os.path.join(self.args.output_directory, "03_pdata"), exist_ok=True)
+		self.extract_parsed_data()
 
 		os.makedirs(os.path.join(self.args.output_directory, "04_auth"), exist_ok=True)
 
