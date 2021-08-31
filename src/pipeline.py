@@ -34,7 +34,7 @@ class Pipeline():
 			filepath = os.path.join(args.output_directory, "03_pdata", filename)
 			cur_df = pd.read_pickle(filepath)
 			compute_statement_auth(args, cur_df, filename)
-		combine_auth
+		combine_auth()
 
 	def run_main(self):
 		# dependency parsing
