@@ -18,8 +18,12 @@ The code base does **_not_** cover:
 
 Assuming [Anaconda](https://docs.anaconda.com/anaconda/install/) and linux, the environment can be installed with the following command:
 ```shell
+conda create -n labor-contracts python=3.6
+conda activate labor-contracts
 pip install -r requirements.txt
 python -m spacy download en
 ```
+
+
 
 
