@@ -24,6 +24,22 @@ pip install -r requirements.txt
 python -m spacy download en
 ```
 
+## Run the pipeline
+
+Input is ...
+
+Output will be ...
+
+```shell
+python pipeline.py
+```
+
+
+## What probably needs to be customized for other contract collections
+
+* data loading
+* different roles
+
 
 
 
