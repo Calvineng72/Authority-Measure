@@ -10,6 +10,7 @@ from collections import defaultdict
 from main02_parse_articles import parse_article
 from main03_get_parse_data import extract_pdata
 from main04_compute_auth import combine_auth, compute_statement_auth
+import pandas as pd
 
 
 class Pipeline():
@@ -37,12 +38,12 @@ class Pipeline():
 
 	def run_main(self):
 		# dependency parsing
-		os.makedirs(os.path.join(self.args.output_directory, "02_parsed_articles"), exist_ok=True)
-		self.parse_articles()
+		#os.makedirs(os.path.join(self.args.output_directory, "02_parsed_articles"), exist_ok=True)
+		#self.parse_articles()
 
 		# extract necessary parsed information
-		os.makedirs(os.path.join(self.args.output_directory, "03_pdata"), exist_ok=True)
-		self.extract_parsed_data()
+		#os.makedirs(os.path.join(self.args.output_directory, "03_pdata"), exist_ok=True)
+		#self.extract_parsed_data()
 
 		os.makedirs(os.path.join(self.args.output_directory, "04_auth"), exist_ok=True)
 
