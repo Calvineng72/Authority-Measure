@@ -8,7 +8,7 @@ The code base covers
 * Extracting Rights and Duties 
 * Computing Authority Scores per Article level
 
-The code base does ** not ** cover
+The code base does **_not_** cover
 
 * Splitting Contracts into sections (we developed a customized solution for converting PDFs to text and splitting labor union contracts which is domain specific and does not translate well to other contracts)
 * Our analysis (which is also heavily customized for Canadian Union Contracts and does not necessarily translate well to other domain
