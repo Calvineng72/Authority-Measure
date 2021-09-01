@@ -11,8 +11,8 @@ The code base does **_not_** cover:
 
 * Splitting Contracts into articles (we developed a customized solution for converting PDFs to text and splitting labor union contracts which is domain specific and does not translate well to other contracts)
 * Parallelized parsing (the computational bottleneck for large collections is spaCy dependency parsing. We computed this in parallel using linux command line tools and 96 machines)
-* Aggregating authority scores (we aggregated on contract level, but this depends obviously on the specific use case)
-* Our analysis which is also heavily customized for Canadian Union Contracts and does not necessarily translate well to other domain
+* Aggregating authority scores (we aggregated on contract level, but this depends on the specific use case)
+* Our analysis which is also heavily customized for Canadian Union Contracts and does not necessarily translate well to other domain (e.g. clustering on article headers and training LDA)
 
 
 ## Installation
@@ -41,7 +41,7 @@ python -m spacy download en
 
 Input to the pipeline is a directory containing each contract as a json file. Each contract should already be split into "articles", and contain a contract_id.
 
-Output will be stored in output_directory, the main output is the file 04_auth.pkl saved in output_directory. For each subject-verb tuple, it contains whether it is an entitlement, obligation etc. and saves the "role" of the subject (worker, firm etc.). These results can then be aggregated at any desired level. Intermediate pipeline steps will get saved as well in the output directory.
+Output will be stored in output_directory, the main output there is the file 04_auth.pkl. For each subject-verb tuple, it contains a boolean value whether it is an entitlement, obligation etc. and saves the "role" of the subject (worker, firm etc.). These results can then be aggregated at any desired level. Intermediate pipeline steps will get saved as well in the output directory.
 
 ```shell
 input_directory="path/to/directory/with/contracts"
@@ -52,8 +52,8 @@ python src/pipeline.py --input_directory $input_directory --output_directory $ou
 
 ## What probably needs to be customized for other contract collections
 
-* data loading (which is customized). Overwrite the function **articles_as_strlist** in src/main02_parse_articles.py, should return a list where each entry is a tuple (text, {"contract_id": idx, "article_num": article_num})
-* we care for different roles, e.g. worker, firm etc. This is simply a dictionary, e.g. worker are the following words: worker="employee,worker,staff,teacher,nurse,mechanic,operator,steward,personnel" Overwrite these for customized applications in the file main04_compute_auth.py
+* Data loading (which is customized). Overwrite the function **articles_as_strlist** in src/main02_parse_articles.py, should return a list where each entry is a tuple (text, {"contract_id": idx, "article_num": article_num})
+* We were interested in very specific roles, e.g. worker, firm etc. This is simply a dictionary lookup of the subject of a clause, e.g. following words are considered to be *worker*: worker="employee,worker,staff,teacher,nurse,mechanic,operator,steward,personnel" Overwrite these for customized applications in the file main04_compute_auth.py
 
 
 
