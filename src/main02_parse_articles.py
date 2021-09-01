@@ -57,7 +57,6 @@ def get_branch(t,sent,include_self=True):
     if include_self:
         branch += [t]
             
-    #branch = [m for m in branch if m.dep_ != 'punct' and not m.orth_.isdigit()]
     branch = [w for w in sent if w in branch]# and w.dep_ in include]
 
     lemmas = []
@@ -74,30 +73,21 @@ def get_branch(t,sent,include_self=True):
         lemmas.append(lemma)
         tags.append(token.tag_)
     
-    #tags = [w.tag_ for w in sent if w in mods]
     return lemmas, tags
 
 def get_statements(art_nlp, contract_id, art_num):
-    #print("get_statements()")
     statement_list = []
     time_in_pbs = 0
-    # For now, since spaCy neural coref is super buggy, need to check if
+    # For now, since spaCy neural coref is buggy, need to check if
     # there are any coref clusters in the doc
     any_corefs = art_nlp._.coref_clusters is not None
-    #print (art_nlp._.coref_clusters)
-    #print (any_corefs)
-    #any_corefs = False
     for sentence_num, sent in enumerate(art_nlp.sents):
         tokcheck = str(sent).split()
         if any([x.isupper() and len(x) > 3 for x in tokcheck]):
             # Don't parse this sentence
             continue
         
-        #pbs_start = timer()
         sent_statements = parse_by_subject(sent, resolve_corefs=any_corefs)
-        #pbs_end = timer()
-        #pbs_elapsed = pbs_end - pbs_start
-        #time_in_pbs += pbs_elapsed
         
         for statement_num, statement_data in enumerate(sent_statements):
             full_data = statement_data.copy()
@@ -106,12 +96,7 @@ def get_statements(art_nlp, contract_id, art_num):
             full_data['sentence_num'] = sentence_num
             full_data['statement_num'] = statement_num
             full_data['full_sentence'] = str(sent)
-            # Note to self: statement_data contains a "full_statement"
-            # key, so that gets "transferred" over to full_data.
-            #print("Data to put in the db:")
-            #print(data)
             statement_list.append(full_data)
-    #print("Loop over sentences took " + str(total_pbs))
     return statement_list
 
 def parse_article(filename, nlp, args):
@@ -138,19 +123,6 @@ def parse_article(filename, nlp, args):
 
 
 def parse_by_subject(sent, resolve_corefs=True):
-    ### TODO: SMART THINGS like splitting the tree into *segments*
-    ### such that each segment is the "phrase" for its subject.
-    ### e.g. if sent has more than one subject:
-    ### (1) find the HEAD subject
-    ### (2) "cut off" all the other subtrees of *non-HEAD* subjects.
-    ###     In other words everywhere you see a subject, besides the
-    ###     HEAD, "clip" the tree at that node. Pull that node out of
-    ###     the tree and keep it separate
-    ### (3) Iterating over all the subtrees of nodes in (2) gives you
-    ###     the non-HEAD phrases. Now to get the HEAD phrase you take
-    ###     all the tokens that haven't been "covered" yet, e.g., any
-    ###     token whose ONLY subject ancestor is HEAD.
-    #all_tokens = [t for t in sent]
     subjects = [t for t in sent if t.dep_ in subdeps]
 
     ## Only for debugging
@@ -163,14 +135,7 @@ def parse_by_subject(sent, resolve_corefs=True):
     # Each subject corresponds to a statement that it is the subject of.
     # Hence this is a loop over *statements*
     for obnum, subject in enumerate(subjects):   
-        subdep = subject.dep_
-        
-        # Again, debugging
-        #if str(subject) == "Board" or str(subject) == "claim":
-        #    print(subject)
-        #    print(subject.head)
-        #    print(list(subject.head.subtree))
-        
+        subdep = subject.dep_        
         mlem = None
         verb = subject.head
         if not verb.tag_.startswith('V'):
@@ -178,12 +143,7 @@ def parse_by_subject(sent, resolve_corefs=True):
                 
         vlem = verb.lemma_
         
-        tokenlists = defaultdict(list)
-        
-        #if 'if' in tokcheck:
-        #    print(sent)
-        #    raise
-                        
+        tokenlists = defaultdict(list)                        
         neg = ''
         for t in verb.children:
             if t.tag_ == 'MD':
@@ -194,21 +154,12 @@ def parse_by_subject(sent, resolve_corefs=True):
                 continue
             if dep == 'neg':
                 neg = 'not'                
-            #elif t.dep_ == 'auxpass':
-            #    vlem = t.orth_.lower() + '_' + vlem
             elif t.dep_ == 'prt':
                 vlem = vlem + '_' + t.orth_.lower()                    
-            #elif dep in maindeps:
-            #    tokenlists[dep].append(t)
             else:
-                #pass
-                #print([modal,vlem,t,t.dep_,sent])
-                #dcount[t.dep_] += 1
                 tokenlists[dep].append(t)
                 
         slem = subject.lemma_
-
-        #print("subject lemma: " + str(slem))
         in_coref = False
         cr_subject = subject.text
         cr_slem = slem
@@ -217,8 +168,6 @@ def parse_by_subject(sent, resolve_corefs=True):
         if resolve_corefs:
             in_coref = subject._.in_coref
             # Now check if it's *different* from the coref cluster's main coref
-            # TODO: Right now we take the first cluster. Instead, take the cluster
-            # with the *closest* main to the subject
             if in_coref:
                 coref_clusters = subject._.coref_clusters
                 num_clusters = len(coref_clusters)
@@ -269,9 +218,6 @@ def parse_by_subject(sent, resolve_corefs=True):
         data['object_branches'] = object_branches
         data['object_tags'] = object_tags
 
-        # Last but not least, the full text of the statement
-        # (if possible?) TODO. It's NOT trivial. So for now it's
-        # just always the empty string
         data['full_statement'] = ""
         
         # So upon being added to datalist, the "data" dictionary has the following

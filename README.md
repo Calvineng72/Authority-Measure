@@ -39,19 +39,22 @@ python -m spacy download en
 
 ## Run the pipeline
 
-Input is ...
+Input to the pipeline is a directory containing each contract as a json file. Each contract should already be split into "articles", and contain a contract_id.
 
-Output will be ...
+Output will be stored in output_directory, the main output is the file 04_auth.pkl saved in output_directory. For each subject-verb tuple, it contains whether it is an entitlement, obligation etc. and saves the "role" of the subject (worker, firm etc.). These results can then be aggregated at any desired level. Intermediate pipeline steps will get saved as well in the output directory.
 
 ```shell
-python pipeline.py
+input_directory="path/to/directory/with/contracts"
+output_directory="authority_measures"
+python src/pipeline.py --input_directory $input_directory --output_directory $output_directory
 ```
 
 
 ## What probably needs to be customized for other contract collections
 
-* data loading
-* different roles
+* data loading (which is customized). Overwrite the function **articles_as_strlist** in src/main02_parse_articles.py, should return a list where each entry is a tuple (text, {"contract_id": idx, "article_num": article_num})
+* we care for different roles, e.g. worker, firm etc. This is simply a dictionary, e.g. worker are the following words: worker="employee,worker,staff,teacher,nurse,mechanic,operator,steward,personnel" Overwrite these for customized applications in the file main04_compute_auth.py
+
 
 
 
