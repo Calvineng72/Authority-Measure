@@ -5,7 +5,7 @@ This is the (partial) code base for our paper [Unsupervised Extraction of Workpl
 The code base covers:
 
 * Parsing articles
-* Computing Authority Scores per Article level
+* Computing Authority Scores on statement level
 
 The code base does **_not_** cover:
 
