@@ -7,7 +7,7 @@ from tqdm import tqdm
 # 3rd party imports
 import joblib
 import spacy
-import neuralcoref
+#import neuralcoref
 import sys
 from collections import defaultdict
 
@@ -75,12 +75,16 @@ def get_branch(t,sent,include_self=True):
     
     return lemmas, tags
 
-def get_statements(art_nlp, contract_id, art_num):
+def get_statements(art_nlp, contract_id, art_num, args):
     statement_list = []
     time_in_pbs = 0
     # For now, since spaCy neural coref is buggy, need to check if
     # there are any coref clusters in the doc
-    any_corefs = art_nlp._.coref_clusters is not None
+    if args.use_neural_coref:
+        any_corefs = art_nlp._.coref_clusters is not None
+    else:
+        any_corefs = False
+    
     for sentence_num, sent in enumerate(art_nlp.sents):
         tokcheck = str(sent).split()
         if any([x.isupper() and len(x) > 3 for x in tokcheck]):
@@ -103,20 +107,29 @@ def parse_article(filename, nlp, args):
     statement_list = []
     filepath = os.path.join(args.input_directory, filename)
 
+    # if we have json contracts
+    if filename.endswith(".json"):
+        with open(filepath) as f:
+            contract_data = json.load(f)
+        # parse_article function, yields a list of tuples [(article_as_string, article_meta_information)]
+        # should be overwritten for custom data
+        art_data = articles_as_strlist(contract_data)
 
-    with open(filepath) as f:
-        contract_data = json.load(f)
-    # parse_article function, yields a list of tuples [(article_as_string, article_meta_information)]
-    # should be overwritten for custom data
-    art_data = articles_as_strlist(contract_data)
-
-    # do the actual function
-    for text, art_meta in art_data:
-        art_nlp = nlp(text)
-        contract_id = art_meta["contract_id"]
-        art_num = art_meta["article_num"]
-        art_statements = get_statements(art_nlp, contract_id, art_num)
-        statement_list.extend(art_statements)
+        # do the actual function
+        for text, art_meta in art_data:
+            art_nlp = nlp(text)
+            contract_id = art_meta["contract_id"]
+            art_num = art_meta["article_num"]
+            art_statements = get_statements(art_nlp, contract_id, art_num, args)
+            statement_list.extend(art_statements)            
+    # otherwise, if we have contracts as .txt files
+    elif filename.endswith(".txt"):
+        with open(filepath) as f:
+            art_nlp = nlp(f.read())
+        art_num = 0 # all article_numbers are 0, because we haven't split contracts into articles
+        contract_id = os.path.basename(filename) # contract_id is just the filename
+        art_statements = get_statements(art_nlp, contract_id, art_num, args)
+        statement_list.extend(art_statements)                   
     # fn[:-4] strips the "json" ending and replaces with ".pkl" ending
     parses_fpath = os.path.join(args.output_directory, "02_parsed_articles", filename[:-4] + "pkl") 
     joblib.dump(statement_list, parses_fpath)
@@ -246,6 +259,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_directory", type=str, default="")
     parser.add_argument("--output_directory", type=str, default="")
+    parser.add_argument("--use_neural_coref", action='store_true')
     args = parser.parse_args()
 
     try:
@@ -258,6 +272,7 @@ if __name__ == "__main__":
         pass
 
     nlp = spacy.load('en_core_web_sm', disable=["ner"])
-    neuralcoref.add_to_pipe(nlp)
+    if args.use_neural_coref:
+        neuralcoref.add_to_pipe(nlp)
     for filename in tqdm(os.listdir(args.input_directory)):
         parse_article(filename, nlp, args)

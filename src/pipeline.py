@@ -19,7 +19,8 @@ class Pipeline():
 		self.args = args
 		os.makedirs(self.args.output_directory, exist_ok=True)
 		self.nlp = spacy.load('en_core_web_sm', disable=["ner"])
-		neuralcoref.add_to_pipe(self.nlp)
+		if args.use_neural_coref:
+			neuralcoref.add_to_pipe(self.nlp)
 
 	def parse_articles(self):
 		for filename in tqdm(os.listdir(args.input_directory)):
@@ -55,8 +56,9 @@ class Pipeline():
 		
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--input_directory", type=str, default="")
-	parser.add_argument("--output_directory", type=str, default="")
+	parser.add_argument("--input_directory", type=str, default="/home/dominsta/Documents/generate-labor-contracts/sample_articles/")
+	parser.add_argument("--output_directory", type=str, default="union-contracts-sample")
+	parser.add_argument("--use_neural_coref", action='store_true')
 	args = parser.parse_args()
 	pipeline = Pipeline(args)
 	pipeline.run_main()
