@@ -56,8 +56,8 @@ class Pipeline():
 		
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--input_directory", type=str, default="/home/dominsta/Documents/generate-labor-contracts/sample_articles/")
-	parser.add_argument("--output_directory", type=str, default="union-contracts-sample")
+	parser.add_argument("--input_directory", type=str, default="sample_data")
+	parser.add_argument("--output_directory", type=str, default="output_sample_data")
 	parser.add_argument("--use_neural_coref", action='store_true')
 	args = parser.parse_args()
 	pipeline = Pipeline(args)

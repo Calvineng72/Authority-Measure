@@ -47,8 +47,8 @@ The pipeline covers two types of input. In any case, input is a directory contai
 Output will be stored in output_directory, the main output there is the file 04_auth.pkl. For each subject-verb tuple, it contains a boolean value whether it is an entitlement, obligation etc. and saves the "role" of the subject (worker, firm etc.). These results can then be aggregated at any desired level. Intermediate pipeline steps will get saved as well in the output directory.
 
 ```shell
-input_directory="path/to/directory/with/contracts"
-output_directory="authority_measures"
+input_directory="sample_data"
+output_directory="output_sample_data"
 python src/pipeline.py --input_directory $input_directory --output_directory $output_directory
 ```
 
