@@ -52,6 +52,14 @@ output_directory="authority_measures"
 python src/pipeline.py --input_directory $input_directory --output_directory $output_directory
 ```
 
+Our results in the paper are computed with coreferences resolved. However, setting up neuralcoref spacy in 2022 is somewhat cumbersome and the whole process is computationally expensive. If coreference resolution is desired, install neural_coref and run the pipeline with the flug --use_neural_coref 
+
+```shell
+input_directory="path/to/directory/with/contracts"
+output_directory="authority_measures"
+python src/pipeline.py --use_neural_coref --input_directory $input_directory --output_directory $output_directory
+```
+
 
 ## What probably needs to be customized for other contract collections
 * We were interested in very specific roles, e.g. worker, firm etc. This is simply a dictionary lookup of the subject of a clause, e.g. following words are considered to be *worker*: worker="employee,worker,staff,teacher,nurse,mechanic,operator,steward,personnel" Overwrite these for customized applications in the file main04_compute_auth.py
