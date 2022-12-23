@@ -24,6 +24,8 @@ The code base does **_not_** cover:
 
 ## Update December 2023
 
+* Added aggregating scores per subject on contract level
+* Re-factored how entitlemnets are computed in src/main04_compute_auth.py
 
 ## Installation
 
