@@ -99,23 +99,29 @@ def compute_statement_auth(args, df, filename):
     df['obligation_verb'] = ((df_passive & 
                       df['verb'].isin(['require', 'expect', 'compel', 'oblige', 'obligate'])) |
                       (~df_passive & df['verb'].isin(['agree','promise']))).astype('bool')
-        
 
     # constraint verbs 
     df['constraint_verb'] = (df_passive & 
                       df['verb'].isin(['prohibit', 'forbid', 'ban', 'bar', 'restrict', 'proscribe'])).astype('bool')
         
-      
     # permissiion verbs are be allowed, be permitted, and be authorized
     df['permission_verb'] =  (df_passive &  
                        df['verb'].isin(['allow', 'permit', 'authorize'])).astype('bool')
         
       
     df_notpassive = ~df_passive
+    df_neg = df['neg']
+    df_notneg = ~df_neg
+
+    """
+    # this was the original implementation
     df['entitlement_verb'] =  ((df_notpassive &  
                          df['verb'].isin(['have', 'receive','retain', ])) | (df_passive & df['verb'].isin(['entitle']))).astype('bool')
-        
-      
+    """    
+    # this is the new entitlement verblist    
+    df['entitlement_verb'] =  ((df_notpassive &   
+                         df['verb'].isin(['receive', "gain", "earn"])) | (df_passive & df['verb'].isin(['entitle', 'give', "offer", "reimburse", "pay", "grant", "provide", "compensate", "guarantee", "hire", "train", "supply", "protect", "cover", "inform", "notify", "grant_off", "select", "allow_off", "award", "give_off", "protect", "pay_out", "allow_up"]))).astype('bool')
+
     df['promise_verb'] = (df_notpassive & 
                   df['verb'].isin(['commit','recognize',
                               'consent','assent','affirm','assure',
@@ -126,8 +132,6 @@ def compute_statement_auth(args, df, filename):
       
     df['active_verb'] = (df_notpassive & ~df['special_verb']).astype('bool')
         
-    df_neg = df['neg']
-    df_notneg = ~df_neg
     df['obligation'] = ((df_notneg & df['strict_modal'] & df['active_verb']) |     #positive, strict modal, action verb
                     (df_notneg & df['strict_modal'] & df['obligation_verb']) | #positive, strict modal, obligation verb
                     (df_notneg & ~df['md'] & df['obligation_verb'])).astype('bool')           #positive, non-modal, obligation verb
@@ -141,11 +145,18 @@ def compute_statement_auth(args, df, filename):
                   (df['neg'] & df['constraint_verb'])).astype('bool')
         
                           
-                          
+    """          
+    # this was the original implementation                
     df['entitlement'] = ((df_notneg & df['entitlement_verb']) |
                   (df_notneg & df['strict_modal'] & df['passive'] & ~df['obligation_verb'] &~df['permission_verb'] & ~df["constraint_verb"]) |
-                  (df_neg & df['obligation_verb'])).astype('bool')
-    print (df)
+                  (df_neg & df['obligation_verb'])).astype('bool')  
+    """
+
+
+    df['entitlement'] = ((df_notneg & df['entitlement_verb']) |
+                  # (df_notneg & df['strict_modal'] & df['passive'] & ~df['obligation_verb'] &~df['permission_verb'] & ~df["constraint_verb"]) | # we drop these because they produce e.g., worker must be laid off, which clearly is not an entitlement... We double-checked and included all the verbs (from the top-100 most frequent verbs) which are produced by this and are true entitlements to df["entitlement_verb"]
+                  (df_neg & df['obligation_verb'])).astype('bool')  
+    
     df.to_pickle(os.path.join(args.output_directory, "04_auth", filename.replace("pdata_", "auth_")))
 
 if __name__ == "__main__":
