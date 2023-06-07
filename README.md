@@ -1,6 +1,5 @@
 # Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements
 
-
 This is the (partial) code base for our paper [Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements](https://www.research-collection.ethz.ch/handle/20.500.11850/473199.1). For questions regarding the code base, please contact dominik.stammbach@gess.ethz.ch.
 
 The code base covers:

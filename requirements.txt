@@ -1,8 +1,0 @@
-gensim
-joblib
-nltk
-pandas
-unidecode
-tqdm
-inflect
-
