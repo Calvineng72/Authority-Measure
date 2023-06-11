@@ -25,6 +25,7 @@ def extract_pdata(args):
 
     mlemcount = Counter() # TO REMOVE
     vlemcount = Counter() # TO REMOVE
+    slemcount = Counter() # TO REMOVE
 
     iteration_num = 0
     chunk_num = 0
@@ -39,35 +40,35 @@ def extract_pdata(args):
             # loops over each statement, getting the subject/subject_branch/subject_tag
             subject = statement_data['subject']
             statement_dict = {'contract_id':contract_id,
-                              'sentence_num':statement_data['sentence_num'],
-                              'full_sentence':statement_data['full_sentence'],
-                              'full_statement':statement_data['full_statement'],
+                            #   'sentence_num':statement_data['sentence_num'],
+                            #   'full_sentence':statement_data['full_sentence'],
+                            #   'full_statement':statement_data['full_statement'],
                               'subject':statement_data['subject'], 'passive':statement_data['passive'],
-                              'subject_tags':statement_data['subject_tags'],
-                              'subject_branch':statement_data['subject_branch'],    
-                              'object_tags':statement_data['object_tags'],
-                              'verb':statement_data['vlem'], 'modal':statement_data['mlem'], # CHANGED TO MLEM FROM MODAL and VLEM FROM VERB
+                            #   'subject_tags':statement_data['subject_tags'],
+                            #   'subject_branch':statement_data['subject_branch'],    
+                            #   'object_tags':statement_data['object_tags'],
+                            #   'object_branches':statement_data['object_branches'],
+                              'verb':statement_data['vlem'], 'modal':statement_data['mlem'],
                               'md':statement_data['md'], 'neg':statement_data['neg'],
-                              'slem':statement_data['slem'],
-                              'object_branches':statement_data['object_branches']}
+                              'slem':statement_data['slem']}
 
             pdata_rows.append(statement_dict)
-            subjectnouns = sorted([x for x, t in zip(statement_data['subject_branch'], statement_data['subject_tags']) if t.startswith('N')])
+            # subjectnouns = sorted([x for x, t in zip(statement_data['subject_branch'], statement_data['subject_tags']) if t.startswith('N')])
             subcount[subject] += 1
 
             # TO REMOVE
             vlemcount[statement_dict['verb']] += 1
             mlemcount[statement_dict['modal']] += 1
+            slemcount[statement_dict['slem']] += 1
 
             if statement_data['md'] == 1:
                 modalcount[subject] += 1
-            for x in subjectnouns:
-                if x != subject:
-                    subnouncount[x] += 1
+            # for x in subjectnouns:
+            #     if x != subject:
+            #         subnouncount[x] += 1
             
             iteration_num = iteration_num + 1
             if iteration_num % 100000 == 0:
-                print("Iteration ", iteration_num)
                 cur_df = pd.DataFrame(pdata_rows)
                 cur_df.to_pickle(os.path.join(args.output_directory, "03_pdata", "pdata_" + str(chunk_num) + ".pkl"))
                 chunk_num += 1
@@ -87,6 +88,7 @@ def extract_pdata(args):
     print("most common subjects", subcount.most_common()[:100])
     print("most common modals", mlemcount.most_common()[:100]) # TO REMOVE
     print("most common verbs", vlemcount.most_common()[:100]) # TO REMOVE
+    print("most common lemmatized subjects", slemcount.most_common()[:100]) # TO REMOVE
     
 
 if __name__ == "__main__":

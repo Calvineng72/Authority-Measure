@@ -13,14 +13,10 @@ from collections import defaultdict
 # subject dependencies
 subdeps = ['nsubj', 'nsubj:pass']
 
-# TODO: Remove array and replace with string comparison
-# negation words
-negations = ['NÃO', 'Não', 'não']
-
 # to be words 
-to_be = ['estar', 'ser', 'ficar']
+to_be = ['estar', 'ser', 'ficar', 'ficam']
 
-# modal verbs ('ter que' is checked for seperately)
+# modal verbs ('ter que' and 'ir' are checked for seperately)
 modal_verbs = ['dever', 'poder']
         
 def get_branch(t, sent, include_self=True):       
@@ -53,7 +49,7 @@ def get_branch(t, sent, include_self=True):
     
     return lemmas, tags
 
-def get_statements(art_nlp, contract_id):
+def get_statements(art_nlp, contract_id, nlp):
     """
     Extracts statements from the given article's spaCy parsed document.
 
@@ -76,15 +72,16 @@ def get_statements(art_nlp, contract_id):
         if len(tokcheck) < 3:
             continue
         
-        sent_statements = parse_by_subject(sent)
+        sent_statements = parse_by_subject(sent, nlp)
         
-        for statement_num, statement_data in enumerate(sent_statements):
+        # for statement_num, statement_data in enumerate(sent_statements):
+        for statement_data in sent_statements:
             full_data = statement_data.copy()
             full_data.update({
                 'contract_id': contract_id,
-                'sentence_num': sentence_num,
-                'statement_num': statement_num,
-                'full_sentence': str(sent)
+                # 'sentence_num': sentence_num,
+                # 'statement_num': statement_num,
+                # 'full_sentence': str(sent)
             })
             statement_list.append(full_data)
             
@@ -109,15 +106,15 @@ def parse_article(filename, nlp, args):
         with open(filepath) as f:
             art_nlp = nlp(f.read())
         contract_id = os.path.basename(filename) 
-        art_statements = get_statements(art_nlp, contract_id)
+        art_statements = get_statements(art_nlp, contract_id, nlp)
         statement_list.extend(art_statements)            
 
-    parses_fpath = os.path.join(args.output_directory, "02_parsed_articles", filename[:-4] + "pkl") 
+    parses_fpath = os.path.join(args.output_directory, "02_parsed_articles", filename[:-3] + "pkl") 
     joblib.dump(statement_list, parses_fpath)
     # with io.open(parses_fpath, 'w', encoding='utf8') as f:
     #     json.dump(statement_list, f)
 
-def parse_by_subject(sent):
+def parse_by_subject(sent, nlp):
     """
     Parses a sentence based on its subject and extracts relevant information related to clauses, 
     such as the presence of modal verbs, a negation word, or passive voice constructions.
@@ -133,14 +130,6 @@ def parse_by_subject(sent):
     subjects = [t for t in sent if t.dep_ in subdeps]
     datalist = []
 
-    # for t in sent:
-    #     if t.dep_ == 'ROOT' and t.tag_ == 'VERB':
-    #         for child in t.children:
-    #             if child in subjects: 
-    #                 break
-    #             if child.dep_ == 'obj' and (child.tag_ == 'NOUN' or child.tag_ == 'PROPN'):
-    #                 subjects.append(child)
-
     for subject in subjects:   
         # stores original subject
         orignial_stext = subject.text       
@@ -151,35 +140,25 @@ def parse_by_subject(sent):
         helping_verb = None
         modal = None
 
-        # stores new subject data (if needed)
-        correct_stext = orignial_stext
-        correct_slem = original_slem
-        coref_replaced = False
+        # # stores new subject data (if needed)
+        # correct_stext = orignial_stext
+        # correct_slem = original_slem
+        # coref_replaced = False
 
         # checks for subject 'que'
-        if subject.text == 'que':
-            for ancestor in subject.ancestors:
-                if (ancestor.tag_ == 'NOUN' or ancestor.tag_ == 'PRON' or ancestor.tag_ == 'PROPN') and (ancestor not in subjects):
-                    correct_stext = ancestor.text
-                    correct_slem = ancestor.lemma_.lower()
-                    coref_replaced = True
-                    for child in ancestor.children:
-                        if child.tag_ == 'VERB' and child.dep_ != 'acl:relcl':
-                            verb = child
-            if not coref_replaced:
-                continue
-            # if not coref_replaced:
-            #     for ancestor in subject.ancestors:
-            #         if ancestor.dep_ == 'ROOT' and ancestor not in subjects:
-            #             correct_stext = ancestor.text
-            #             correct_slem = ancestor.lemma_.lower()
-            #             coref_replaced = True
-            #             for child in ancestor.children:
-            #                 if child.tag_ == 'VERB' and child.dep_ != 'acl:relcl':
-            #                     verb = child
+        if original_slem == 'que':
+            continue
+        # if subject.text == 'que':
+        #     for ancestor in subject.ancestors:
+        #         if (ancestor.tag_ == 'NOUN' or ancestor.tag_ == 'PRON' or ancestor.tag_ == 'PROPN') and (ancestor not in subjects):
+        #             if ancestor in verb.ancestors and verb in ancestor.children:
+        #                 correct_stext = ancestor.text
+        #                 correct_slem = ancestor.lemma_.lower()
+        #                 coref_replaced = True
+        #     if not coref_replaced:
+        #         continue
 
         # checks for modal and passive verbs
-        # TODO: MAKE MORE EXPANSIVE MODALS?????????????
         for child in verb.children:
             if child.dep_ == 'xcomp' and verb.lemma_.lower() in modal_verbs:
                 modal = verb
@@ -189,6 +168,9 @@ def parse_by_subject(sent):
                         helping_verb = child_child
                         break
                 break
+            elif child.dep_ == 'xcomp' and child.tag_ == 'VERB' and verb.lemma_.lower() in to_be:
+                helping_verb = verb
+                verb = child
             elif child.dep_.startswith('aux') and child.lemma_.lower() in to_be:
                 helping_verb = child
                 break
@@ -208,9 +190,10 @@ def parse_by_subject(sent):
 
         # checks for 'ter que'
         if modal is None: 
-            if 'tem' and 'que' in [child.text for child in verb.children]:
+            children_text = [child.text for child in verb.children]
+            if 'tem' in children_text and 'que' in children_text:
                 modal_text, mlem = 'tem_que', 'ter_que'
-            elif 'têm' and 'que' in [child.text for child in verb.children]:
+            elif 'têm' in children_text and 'que' in children_text:
                 modal_text, mlem = 'têm_que', 'ter_que'
 
         # checks for future tense verbs
@@ -219,6 +202,25 @@ def parse_by_subject(sent):
                 modal_text, mlem = 'vai', 'ir'
             elif verb_text.endswith('rão') or helping_verb_text.endswith('rão'):
                 modal_text, mlem = 'vão', 'ir'
+
+        # checks for -se at the end of a verb
+        if helping_verb is None and verb_text.endswith('-se'):
+            helping_verb_text, hlem = 'se', 'se'
+            verb_text = verb_text.replace('-se', '')
+            vlem = nlp(verb_text)[0].lemma_.lower()
+
+        # checks for -se-á and -se-ão at the end of a verb
+        if helping_verb is None and modal is None:
+            if verb_text.endswith('-se-á'):
+                modal_text, mlem = 'vai', 'ir'
+                verb_text = verb_text.replace('-se-á', '')
+                helping_verb_text, hlem = 'se', 'se'
+                vlem = nlp(verb_text)[0].lemma_.lower()
+            elif verb_text.endswith('-se-ão'):
+                modal_text, mlem = 'vão', 'ir'
+                verb_text = verb_text.replace('-se-ão', '')
+                helping_verb_text, hlem = 'se', 'se'
+                vlem = nlp(verb_text)[0].lemma_.lower()
         
         tokenlists = defaultdict(list)                        
         neg = ''
@@ -226,21 +228,27 @@ def parse_by_subject(sent):
             dep = t.dep_
             if dep in ['punct','cc','det', 'meta', 'intj', 'dep']:
                 continue
-            elif t.text in negations:
+            elif t.text.lower() == 'não':
                 neg = 'não'      
             else:
                 tokenlists[dep].append(t)
+        if helping_verb is not None:
+            for t in helping_verb.children:
+                if t.text.lower() == 'não':
+                    neg = 'não'
 
-        data = {'orig_subject': orignial_stext,
-                'orig_slem': original_slem,
-                'subject': correct_stext,
-                'slem': correct_slem,
-                'coref_replaced': coref_replaced,
+        # data = {'orig_subject': orignial_stext,
+        #         'orig_slem': original_slem,
+        #         'subject': correct_stext,
+        #         'slem': correct_slem,
+        #         'coref_replaced': coref_replaced,
+        data = {'subject': orignial_stext,
+                'slem': original_slem,
+                'neg': neg,
                 'modal': modal_text,
                 'mlem': mlem,
                 'helping_verb': helping_verb_text,
                 'hlem': hlem,
-                'neg': neg,
                 'verb': verb_text,
                 'vlem': vlem,
                 'passive': 0,
@@ -251,24 +259,26 @@ def parse_by_subject(sent):
         if mlem != "":
             data['md'] = 1
         
-        subphrase, subtags = get_branch(subject, sent)                                        
+        # subject and object branches
+        # subphrase, subtags = get_branch(subject, sent)                                        
         
-        data['subject_branch'] = subphrase        
-        data['subject_tags'] = subtags
+        # data['subject_branch'] = subphrase        
+        # data['subject_tags'] = subtags
         
-        object_branches = []
-        object_tags = []
+        # object_branches = []
+        # object_tags = []
         
-        for dep, tokens in tokenlists.items():
-            if dep in subdeps:
-                continue
-            for t in tokens:
-                tbranch, ttags = get_branch(t,sent)                
-                object_branches.append(tbranch)
-                object_tags.append(ttags)
-        data['object_branches'] = object_branches
-        data['object_tags'] = object_tags
-        data['full_statement'] = ''
+        # for dep, tokens in tokenlists.items():
+        #     if dep in subdeps:
+        #         continue
+        #     for t in tokens:
+        #         tbranch, ttags = get_branch(t,sent)                
+        #         object_branches.append(tbranch)
+        #         object_tags.append(ttags)
+
+        # data['object_branches'] = object_branches
+        # data['object_tags'] = object_tags
+        # data['full_statement'] = ''
 
         datalist.append(data)
     

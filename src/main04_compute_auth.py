@@ -99,7 +99,7 @@ def compute_statement_auth(args, df, filename):
         None
     """
     vars_to_keep = ["contract_id", "slem", "subject", 
-                    "md", "verb", "passive", "full_sentence", "neg", "modal"]
+                    "md", "verb", "passive", "neg", "modal"]
 
     df = df[vars_to_keep]
     df["md"] = df["md"].astype('bool')
@@ -157,9 +157,8 @@ def compute_statement_auth(args, df, filename):
     df['constraint'] = ((df_neg & df['md'] & df['active_verb']) |
                         (df_notneg & df['strict_modal'] & df['constraint_verb']) | 
                         (df_neg & df_passive & (df['entitlement_verb'] | df['permission_verb'] ))).astype('bool')
-    df['permission'] = ((df_notneg & ((df['permissive_modal'] & df['active_verb']) | 
-                                      df['permission_verb'])) | 
-                                      (df['neg'] & df['constraint_verb'])).astype('bool')
+    df['permission'] = ((df_notneg & ((df['permissive_modal'] & df['active_verb']) | df['permission_verb'])) | 
+                        (df['neg'] & df['constraint_verb'])).astype('bool')
     df['entitlement'] = ((df_notneg & df['entitlement_verb']) |
                          (df_neg & df['obligation_verb'])).astype('bool')  
     
