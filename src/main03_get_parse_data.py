@@ -20,12 +20,10 @@ def extract_pdata(args):
         None
     """
     subcount = Counter()
-    subnouncount = Counter()
     modalcount = Counter()
-
-    mlemcount = Counter() # TO REMOVE
-    vlemcount = Counter() # TO REMOVE
-    slemcount = Counter() # TO REMOVE
+    mlemcount = Counter()
+    vlemcount = Counter()
+    slemcount = Counter()
 
     iteration_num = 0
     chunk_num = 0
@@ -76,20 +74,34 @@ def extract_pdata(args):
 
     # makes a Pandas df from what is left and saves it
     cur_df = pd.DataFrame(pdata_rows)
-    cur_df.to_pickle(os.path.join(args.output_directory, "03_pdata", "pdata_" + str(chunk_num) + ".pkl")) # CHANGE BACK TO PICKLE
-    sub_counts_filename = os.path.join(args.output_directory, "subject_counts.pkl")
-    joblib.dump(subcount, sub_counts_filename)
-    # with io.open(sub_counts_filename, 'w', encoding='utf8') as f:
-    #     json.dump(subcount, f)
-    modal_counts_filename = os.path.join(args.output_directory, "modal_counts.pkl")
-    joblib.dump(modalcount, modal_counts_filename)    
-    # with io.open(modal_counts_filename, 'w', encoding='utf8') as f:
+    cur_df.to_pickle(os.path.join(args.output_directory, "03_pdata", "pdata_" + str(chunk_num) + ".pkl"))
+
+    # sub_counts_filename = os.path.join(args.output_directory, "subject_counts.pkl")
+    # # joblib.dump(subcount, sub_counts_filename)
+    # with io.open(sub_counts_filename, 'w', encoding='utf-8') as f:
+    #     json.dump(subcount, f, ensure_ascii=False)
+    # modal_counts_filename = os.path.join(args.output_directory, "modal_counts.pkl")
+    # # joblib.dump(modalcount, modal_counts_filename)    
+    # with io.open(modal_counts_filename, 'w', encoding='utf-8') as f:
     #     json.dump(modalcount, f)
-    print("most common subjects", subcount.most_common()[:100])
-    print("most common modals", mlemcount.most_common()[:100]) # TO REMOVE
-    print("most common verbs", vlemcount.most_common()[:100]) # TO REMOVE
-    print("most common lemmatized subjects", slemcount.most_common()[:100]) # TO REMOVE
-    
+
+    slem_counts_filename = os.path.join(args.output_directory, "slem_counts.txt")
+    # joblib.dump(slemcount, slem_counts_filename)    
+    with io.open(slem_counts_filename, 'w', encoding='utf-8') as f:
+        json.dump(slemcount.most_common(), f, ensure_ascii=False)
+    vlem_counts_filename = os.path.join(args.output_directory, "vlem_counts.txt")
+    # joblib.dump(vlemcount, vlem_counts_filename)    
+    with io.open(vlem_counts_filename, 'w', encoding='utf-8') as f:
+        json.dump(vlemcount.most_common(), f, ensure_ascii=False)
+    mlem_counts_filename = os.path.join(args.output_directory, "mlem_counts.txt")
+    # joblib.dump(mlemcount, mlem_counts_filename)    
+    with io.open(mlem_counts_filename, 'w', encoding='utf-8') as f:
+        json.dump(mlemcount.most_common(), f, ensure_ascii=False)
+
+    print("most common subjects (slem)", slemcount.most_common()[:100]) 
+    print("most common modals (mlem)", mlemcount.most_common()[:100])
+    print("most common verbs (vlem)", vlemcount.most_common()[:100])
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

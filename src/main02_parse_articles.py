@@ -65,7 +65,8 @@ def get_statements(art_nlp, contract_id, nlp):
     """
     statement_list = []
     
-    for sentence_num, sent in enumerate(art_nlp.sents):
+    # for sentence_num, sent in enumerate(art_nlp.sents):
+    for sent in art_nlp.sents:
         tokcheck = str(sent).split()
 
         # checks if statement is less than three tokens
@@ -103,7 +104,7 @@ def parse_article(filename, nlp, args):
     filepath = os.path.join(args.input_directory, filename)
 
     if filename.endswith(".txt"):
-        with open(filepath) as f:
+        with open(filepath, encoding='utf-8') as f:
             art_nlp = nlp(f.read())
         contract_id = os.path.basename(filename) 
         art_statements = get_statements(art_nlp, contract_id, nlp)
@@ -111,7 +112,7 @@ def parse_article(filename, nlp, args):
 
     parses_fpath = os.path.join(args.output_directory, "02_parsed_articles", filename[:-3] + "pkl") 
     joblib.dump(statement_list, parses_fpath)
-    # with io.open(parses_fpath, 'w', encoding='utf8') as f:
+    # with io.open(parses_fpath, 'w', encoding='utf-8') as f:
     #     json.dump(statement_list, f)
 
 def parse_by_subject(sent, nlp):
