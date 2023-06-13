@@ -76,8 +76,9 @@ def check_neg(statement_row):
 
 def compute_statement_auth(args, df, filename):
     ### auth measures below
-    vars_to_keep = ["contract_id","article_num","sentence_num","statement_num",
-                    "subject","md","verb","passive","full_sentence", "neg", "modal"]
+    print(df.columns)
+    vars_to_keep = ["contract_id","article_num","statement_num",
+                    "subject","md","verb","passive", "neg"]
 
     df = df[vars_to_keep]
     # We can save memory by converting some of the ints to bools

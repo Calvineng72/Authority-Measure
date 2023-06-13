@@ -8,8 +8,8 @@ import spacy
 import sys
 from collections import defaultdict
 from main02_parse_articles_old import parse_article
-from main03_get_parse_data import extract_pdata
-from main04_compute_auth import combine_auth, compute_statement_auth
+from main03_get_parse_data_old import extract_pdata
+from main04_compute_auth_old import combine_auth, compute_statement_auth
 import pandas as pd
 
 pd.options.mode.chained_assignment = None  # default='warn'

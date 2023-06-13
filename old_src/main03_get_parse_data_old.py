@@ -6,6 +6,9 @@ import argparse
 import pandas as pd
 import joblib
 from tqdm import tqdm
+## REMOVE THIS
+import io
+import json
 
                         
 other = ['agreement',
@@ -21,6 +24,11 @@ def extract_pdata(args):
     subcount = Counter()
     subnouncount = Counter()
     modalcount = Counter()
+
+    ## REMOVE THIS
+    slemcount = Counter()
+    vlemcount = Counter()
+    mlemcount = Counter()
 
     num_to_process = len(os.listdir(args.input_directory))
 
@@ -55,6 +63,12 @@ def extract_pdata(args):
             pdata_rows.append(statement_dict)
             subjectnouns = sorted([x for x,t in zip(statement_data['subject_branch'], statement_data['subject_tags']) if t.startswith('N')])
             subcount[subject] += 1
+
+            # TO REMOVE
+            vlemcount[statement_dict['verb']] += 1
+            mlemcount[statement_dict['modal']] += 1
+            slemcount[statement_dict['subject']] += 1
+
             if statement_data['md'] == 1:
                 modalcount[subject] += 1
             for x in subjectnouns:
@@ -77,6 +91,20 @@ def extract_pdata(args):
     modal_counts_filename = os.path.join(args.output_directory, "modal_counts.pkl")
     joblib.dump(subcount, sub_counts_filename)    
     print("most common subjects", subcount.most_common()[:100])
+
+    ## REMOVE THIS ONCE DONE
+    slem_counts_filename = os.path.join(args.output_directory, "slem_counts.txt")
+    # joblib.dump(slemcount, slem_counts_filename)    
+    with io.open(slem_counts_filename, 'w', encoding='utf-8') as f:
+        json.dump(slemcount.most_common(), f, ensure_ascii=False)
+    vlem_counts_filename = os.path.join(args.output_directory, "vlem_counts.txt")
+    # joblib.dump(vlemcount, vlem_counts_filename)    
+    with io.open(vlem_counts_filename, 'w', encoding='utf-8') as f:
+        json.dump(vlemcount.most_common(), f, ensure_ascii=False)
+    mlem_counts_filename = os.path.join(args.output_directory, "mlem_counts.txt")
+    # joblib.dump(mlemcount, mlem_counts_filename)    
+    with io.open(mlem_counts_filename, 'w', encoding='utf-8') as f:
+        json.dump(mlemcount.most_common(), f, ensure_ascii=False)
     
 
 if __name__ == "__main__":

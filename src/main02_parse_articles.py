@@ -14,7 +14,7 @@ from collections import defaultdict
 subdeps = ['nsubj', 'nsubj:pass']
 
 # to be words 
-to_be = ['estar', 'ser', 'ficar', 'ficam']
+to_be = ['estar', 'ser', 'é', 'são', 'será', 'ficar', 'ficam', 'fica']
 
 # modal verbs ('ter que' and 'ir' are checked for seperately)
 modal_verbs = ['dever', 'poder']

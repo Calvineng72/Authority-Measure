@@ -28,11 +28,11 @@ def combine_auth(args):
 
 worker = ['empregado', 'trabalhador', 'motorista', 'funcionário', 'empregada', 'empregados-jornalistas', 
           'equipe', 'empregados-jornalista', 'professor', 'enfermeiro', 'mecânico', 'operador', 'comissário', 'pessoal',
-          'docente', 'professor', 'contratado', 'jornalista', 'aprendiz', 'empregados', 'empregadas', 'médico']
+          'docente', 'professor', 'contratado', 'jornalista', 'aprendiz', 'empregados', 'empregadas', 'médico', 'empregar']
 firm = ['empregador', 'empresa', 'conselho', 'hospital', 'corporação', 'proprietário', 'superintendente', 'empregadora', 
-        'companhia', 'firma'] 
+        'companhia', 'firma', 'empresas'] 
 union = ['sindicato', 'associação', 'membro', 'representante']
-manager = ['gerente', 'gestão', 'administração', 'administrador', 'supervisor', 'diretor', 'principal']
+manager = ['gerente', 'gestão', 'administração', 'administrador', 'supervisor', 'diretor', 'principal', 'gestor']
 
 subnorm_map = {}
 for i in worker:
