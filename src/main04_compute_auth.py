@@ -30,8 +30,8 @@ worker = ['empregado', 'trabalhador', 'motorista', 'funcionário', 'empregada', 
           'equipe', 'empregados-jornalista', 'professor', 'enfermeiro', 'mecânico', 'operador', 'comissário', 'pessoal',
           'docente', 'professor', 'contratado', 'jornalista', 'aprendiz', 'empregados', 'empregadas', 'médico', 'empregar']
 firm = ['empregador', 'empresa', 'conselho', 'hospital', 'corporação', 'proprietário', 'superintendente', 'empregadora', 
-        'companhia', 'firma', 'empresas'] 
-union = ['sindicato', 'associação', 'membro', 'representante']
+        'companhia', 'firma', 'empresas', 'concessionária', 'empresário'] 
+union = ['sindicato', 'associação', 'membro', 'representante', 'dirigente']
 manager = ['gerente', 'gestão', 'administração', 'administrador', 'supervisor', 'diretor', 'principal', 'gestor']
 
 subnorm_map = {}
