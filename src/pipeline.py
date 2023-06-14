@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 from tqdm import tqdm
 import spacy
 from main02_parse_articles import parse_article
@@ -32,7 +33,35 @@ class Pipeline():
 			cur_df = pd.read_pickle(filepath)
 			compute_statement_auth(self.args, cur_df, filename)
 		combine_auth(self.args)
+
+	def determine_subject_verb_prefixes(self):
+		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))
 		
+		# replaces boolean values with text
+		df['neg'] = df['neg'].apply(lambda x: 'não' if x else '')
+
+		# creates 'others' column for provisions
+		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement']]
+		df_prefixes['others'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement']).astype(bool)
+
+		# forms subject verb prefixes
+		df_prefixes['subject_verb_prefix'] = (
+        	df['subject'] + ' ' + df['neg'] + ' ' + df['modal'] + ' ' + df['helping_verb'] + ' ' + df['verb']
+    	).str.lower().apply(lambda x: re.sub(' +', ' ', x))
+
+		# creates dummy variables for agents
+		subject_df = pd.get_dummies(df['subnorm']).astype(bool)
+		df_prefixes = pd.concat([df_prefixes, subject_df], axis=1)
+
+		# counts and sorts subject verb prefixes
+		df_grouped = df_prefixes.groupby('subject_verb_prefix').size().reset_index()
+		df_grouped.columns = ['subject_verb_prefix', 'count']
+		df_prefixes = pd.merge(df_prefixes, df_grouped, on='subject_verb_prefix')
+		df_prefixes = df_prefixes.drop_duplicates(subset='subject_verb_prefix')
+		df_prefixes = df_prefixes.sort_values(by='count', ascending=False).reset_index(drop=True)
+
+		df_prefixes.to_csv(os.path.join(self.args.output_directory, "05_subject_verb_prefixes.csv"))
+
 	def aggregate_measures(self):
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))		
 		print(df)
@@ -51,10 +80,11 @@ class Pipeline():
 		for cur_subnorm in subjects:
 			df[cur_subnorm + "_count"] = [1 if i == cur_subnorm else 0 for i in df["subnorm"]]
 		df["num_statements"] = [1] * len(df)
-		df = df.groupby("contract_id", as_index = False).sum()
+		df = df.groupby("contract_id", as_index=False).sum()
 		df["contract_id"] = df["contract_id"].str.replace("_cleaned.txt", "", regex=True)
 		print(df)
-		df.to_csv(os.path.join(self.args.output_directory, "05_aggregated.csv")) # change back
+		print(df.columns)
+		df.to_csv(os.path.join(self.args.output_directory, "05_aggregated.csv"))
 
 	def run_main(self):
 		# dependency parsing
@@ -69,6 +99,7 @@ class Pipeline():
 
 		# compute authority measures for chunks
 		self.compute_authority_measures()
+		self.determine_subject_verb_prefixes()
 		self.aggregate_measures()
 		
 

@@ -191,37 +191,37 @@ def parse_by_subject(sent, nlp):
 
         # checks for 'ter que'
         if modal is None: 
-            children_text = [child.text for child in verb.children]
-            if 'tem' in children_text and 'que' in children_text:
-                modal_text, mlem = 'tem_que', 'ter_que'
-            elif 'têm' in children_text and 'que' in children_text:
-                modal_text, mlem = 'têm_que', 'ter_que'
+            children_lemmas = [child.lemma_.lower() for child in verb.children]
+            children_texts = [child.text for child in verb.children]
+            if 'ter' in children_lemmas and 'que' in children_lemmas:
+                ter_index = children_lemmas.index('ter')
+                modal_text, mlem = children_texts[ter_index] + ' que', 'ter que'
 
         # checks for future tense verbs
         if modal is None:
             if verb_text.endswith('rá') or helping_verb_text.endswith('rá'):
-                modal_text, mlem = 'vai', 'ir'
+                mlem = 'ir'
             elif verb_text.endswith('rão') or helping_verb_text.endswith('rão'):
-                modal_text, mlem = 'vão', 'ir'
-
-        # checks for -se at the end of a verb
-        if helping_verb is None and verb_text.endswith('-se'):
-            helping_verb_text, hlem = 'se', 'se'
-            verb_text = verb_text.replace('-se', '')
-            vlem = nlp(verb_text)[0].lemma_.lower()
+                mlem = 'ir'
 
         # checks for -se-á and -se-ão at the end of a verb
         if helping_verb is None and modal is None:
             if verb_text.endswith('-se-á'):
-                modal_text, mlem = 'vai', 'ir'
-                verb_text = verb_text.replace('-se-á', '')
-                helping_verb_text, hlem = 'se', 'se'
-                vlem = nlp(verb_text)[0].lemma_.lower()
+                mlem = 'ir'
+                hlem = 'se'
+                verb_stem = verb_text.replace('-se-á', '')
+                vlem = nlp(verb_stem)[0].lemma_.lower()
             elif verb_text.endswith('-se-ão'):
-                modal_text, mlem = 'vão', 'ir'
-                verb_text = verb_text.replace('-se-ão', '')
-                helping_verb_text, hlem = 'se', 'se'
-                vlem = nlp(verb_text)[0].lemma_.lower()
+                mlem = 'ir'
+                hlem = 'se'
+                verb_stem = verb_text.replace('-se-ão', '')
+                vlem = nlp(verb_stem)[0].lemma_.lower()
+
+        # checks for -se at the end of or in the middle of a verb phrase
+        if helping_verb is None and '-se' in verb_text:
+            hlem = 'se'
+            verb_stem = verb_text.split('-')[0]
+            vlem = nlp(verb_stem)[0].lemma_.lower()
         
         tokenlists = defaultdict(list)                        
         neg = ''

@@ -41,22 +41,24 @@ def extract_pdata(args):
                             #   'sentence_num':statement_data['sentence_num'],
                             #   'full_sentence':statement_data['full_sentence'],
                             #   'full_statement':statement_data['full_statement'],
-                              'subject':statement_data['subject'], 'passive':statement_data['passive'],
+                              'subject': statement_data['subject'], 'passive': statement_data['passive'],
                             #   'subject_tags':statement_data['subject_tags'],
                             #   'subject_branch':statement_data['subject_branch'],    
                             #   'object_tags':statement_data['object_tags'],
                             #   'object_branches':statement_data['object_branches'],
-                              'verb':statement_data['vlem'], 'modal':statement_data['mlem'],
-                              'md':statement_data['md'], 'neg':statement_data['neg'],
-                              'slem':statement_data['slem']}
+                              'helping_verb': statement_data['helping_verb'],
+                              'verb': statement_data['verb'], 'vlem': statement_data['vlem'], 
+                              'modal': statement_data['modal'], 'mlem': statement_data['mlem'],
+                              'md': statement_data['md'], 'neg': statement_data['neg'],
+                              'slem': statement_data['slem']}
 
             pdata_rows.append(statement_dict)
             # subjectnouns = sorted([x for x, t in zip(statement_data['subject_branch'], statement_data['subject_tags']) if t.startswith('N')])
             subcount[subject] += 1
 
             # TO REMOVE
-            vlemcount[statement_dict['verb']] += 1
-            mlemcount[statement_dict['modal']] += 1
+            vlemcount[statement_dict['vlem']] += 1
+            mlemcount[statement_dict['mlem']] += 1
             slemcount[statement_dict['slem']] += 1
 
             if statement_data['md'] == 1:
