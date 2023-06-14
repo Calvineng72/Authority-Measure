@@ -37,7 +37,7 @@ class Pipeline():
 
 	def determine_subject_verb_prefixes(self):
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))
-		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement', 'other_provision']]
+		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'vlem']]
 		
 		# replaces boolean values with text
 		df['neg'] = df['neg'].apply(lambda x: 'não' if x else '')
