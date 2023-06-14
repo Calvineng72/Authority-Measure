@@ -203,6 +203,9 @@ def parse_by_subject(sent, nlp):
                 mlem = 'ir'
             elif verb_text.endswith('rão') or helping_verb_text.endswith('rão'):
                 mlem = 'ir'
+        # if modal_text == 'poderá' or modal_text == 'poderão':
+        #     verb_text, vlem = modal_text, 'poder'
+        #     modal_text, mlem = '', 'ir'
 
         # checks for -se-á and -se-ão at the end of a verb
         if helping_verb is None and modal is None:

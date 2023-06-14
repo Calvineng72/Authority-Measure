@@ -26,13 +26,29 @@ def combine_auth(args):
 
     auth_df.to_pickle(os.path.join(args.output_directory, "04_auth.pkl"))
 
-worker = ['empregado', 'trabalhador', 'motorista', 'funcionário', 'empregada', 'empregados-jornalistas', 
-          'equipe', 'empregados-jornalista', 'professor', 'enfermeiro', 'mecânico', 'operador', 'comissário', 'pessoal',
-          'docente', 'professor', 'contratado', 'jornalista', 'aprendiz', 'empregados', 'empregadas', 'médico', 'empregar']
-firm = ['empregador', 'empresa', 'conselho', 'hospital', 'corporação', 'proprietário', 'superintendente', 'empregadora', 
-        'companhia', 'firma', 'empresas', 'concessionária', 'empresário'] 
-union = ['sindicato', 'associação', 'membro', 'representante', 'dirigente']
-manager = ['gerente', 'gestão', 'administração', 'administrador', 'supervisor', 'diretor', 'principal', 'gestor']
+# worker = ['empregado', 'trabalhador', 'motorista', 'funcionário', 'empregada', 'empregados-jornalistas', 
+#           'equipe', 'empregados-jornalista', 'professor', 'enfermeiro', 'mecânico', 'operador', 'comissário', 'pessoal',
+#           'docente', 'professor', 'contratado', 'jornalista', 'aprendiz', 'empregados', 'empregadas', 'médico', 'empregar']
+# firm = ['empregador', 'empresa', 'conselho', 'hospital', 'corporação', 'proprietário', 'superintendente', 'empregadora', 
+#         'companhia', 'firma', 'empresas', 'concessionária', 'empresário'] 
+# union = ['sindicato', 'associação', 'membro', 'representante', 'dirigente']
+# manager = ['gerente', 'gestão', 'administração', 'administrador', 'supervisor', 'diretor', 'principal', 'gestor']
+
+worker = ['admitida', 'admitidas', 'admitido', 'admitidos', 'aposentada', 'aposentadas', 'aposentado', 'aposentados', 
+          'aprendiz', 'aprendizes', 'contratada', 'contratadas', 'contratado', 'contratados', 'dimitida', 'dimitidas', 
+          'dimitido', 'dimitidos', 'empregada', 'empregadas', 'empregado', 'empregados', 'empregar', 'estagiária', 
+          'estagiárias', 'estagiário', 'estagiários', 'funcionária', 'funcionárias', 'funcionário', 'funcionários',
+          'pessoal', 'suplente', 'suplentes', 'trabalhador', 'trabalhadora', 'trabalhadoras', 'trabalhadores']
+firm = ['companhia', 'companhias', 'concessionária', 'concessionárias', 'concessionário', 'concessionários', 'corporação', 
+        'corporações', 'corporativa', 'corporativas', 'corporativo', 'corporativos', 'empregador', 'empregadora', 'empregadoras', 
+        'empregadores', 'empresa', 'empresar', 'empresária', 'empresárias', 'empresário', 'empresários', 'empresas', 
+        'estabelecimento', 'estabelecimentos', 'firma', 'firmas', 'patrão', 'patroa', 'patroas', 'patrões', 'proprietária',
+        'proprietárias', 'proprietário', 'proprietários']
+union = ['confederação', 'confederações', 'cooperativa', 'cooperativas', 'delegado', 'delegados', 'dirigente', 'dirigentes', 
+         'federação', 'federações', 'grêmio', 'líder', 'líderes', 'representante', 'representantes', 'sindicato', 'sindicatos']
+manager = ['chefe', 'chefes', 'diretor', 'diretora', 'diretoras', 'diretores', 'diretoria', 'diretorias', 'gerência', 'gerências',
+           'gerenciador', 'gerenciadora', 'gerenciadoras', 'gerenciadores', 'gerente', 'gerentes', 'manager', 'managers', 
+           'superintendência', 'superintendente', 'superintendentes', 'supervisor', 'supervisora', 'supervisoras', 'supervisores']
 
 subnorm_map = {}
 for i in worker:
@@ -57,7 +73,7 @@ def normalize_subject(subject):
     if subject in subnorm_map:
         return subnorm_map[subject]
     else:
-        return "other"
+        return "other_agent"
 
 def check_strict_modal(statement_row):
     """
@@ -161,6 +177,7 @@ def compute_statement_auth(args, df, filename):
                         (df['neg'] & df['constraint_verb'])).astype('bool')
     df['entitlement'] = ((df_notneg & df['entitlement_verb']) |
                          (df_neg & df['obligation_verb'])).astype('bool')  
+    df['other_provision'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement'])
     
     df.to_pickle(os.path.join(args.output_directory, "04_auth", filename.replace("pdata_", "auth_")))
 

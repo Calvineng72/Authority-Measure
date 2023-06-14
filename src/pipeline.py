@@ -7,6 +7,7 @@ from main02_parse_articles import parse_article
 from main03_get_parse_data import extract_pdata
 from main04_compute_auth import combine_auth, compute_statement_auth
 import pandas as pd
+import numpy as np
 
 # python src/pipeline.py --input_directory cleaned_cba_samples --output_directory output
 
@@ -36,21 +37,21 @@ class Pipeline():
 
 	def determine_subject_verb_prefixes(self):
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))
+		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement', 'other_provision']]
 		
 		# replaces boolean values with text
 		df['neg'] = df['neg'].apply(lambda x: 'não' if x else '')
 
-		# creates 'others' column for provisions
-		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement']]
-		df_prefixes['others'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement']).astype(bool)
-
 		# forms subject verb prefixes
-		df_prefixes['subject_verb_prefix'] = (
-        	df['subject'] + ' ' + df['neg'] + ' ' + df['modal'] + ' ' + df['helping_verb'] + ' ' + df['verb']
-    	).str.lower().apply(lambda x: re.sub(' +', ' ', x))
+		prefix_components = np.where(
+			df['subject'] == 'se',
+			df['neg'] + ' ' + df['subject'] + ' ' + df['modal'] + ' ' + df['helping_verb'] + ' ' + df['verb'],
+			df['subject'] + ' ' + df['neg'] + ' ' + df['modal'] + ' ' + df['helping_verb'] + ' ' + df['verb']
+		)
+		df_prefixes['subject_verb_prefix'] = [re.sub(' +', ' ', x.lower()) for x in prefix_components]
 
 		# creates dummy variables for agents
-		subject_df = pd.get_dummies(df['subnorm']).astype(bool)
+		subject_df = pd.get_dummies(df['subnorm']).astype('bool')
 		df_prefixes = pd.concat([df_prefixes, subject_df], axis=1)
 
 		# counts and sorts subject verb prefixes
