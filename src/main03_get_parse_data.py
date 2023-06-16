@@ -100,9 +100,9 @@ def extract_pdata(args):
     with io.open(mlem_counts_filename, 'w', encoding='utf-8') as f:
         json.dump(mlemcount.most_common(), f, ensure_ascii=False)
 
-    print("most common subjects (slem)", slemcount.most_common()[:100]) 
-    print("most common modals (mlem)", mlemcount.most_common()[:100])
-    print("most common verbs (vlem)", vlemcount.most_common()[:100])
+    # print("most common subjects (slem)", slemcount.most_common()[:100]) 
+    # print("most common modals (mlem)", mlemcount.most_common()[:100])
+    # print("most common verbs (vlem)", vlemcount.most_common()[:100])
 
 
 if __name__ == "__main__":

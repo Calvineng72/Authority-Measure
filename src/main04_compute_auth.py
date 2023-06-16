@@ -141,7 +141,7 @@ def compute_statement_auth(args, df, filename):
     df['constraint_verb'] = (df_passive & 
                       df['vlem'].isin(['proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar'])).astype('bool')
         
-    # permissiion verbs are be allowed, be permitted, and be authorized
+    # permissiion verbs
     df['permission_verb'] = (df_passive & df['vlem'].isin(['permitir', 'autorizar', 'aprovar', 'habilitar'])).astype('bool')
 
     # entitlement verbs    
@@ -167,17 +167,32 @@ def compute_statement_auth(args, df, filename):
     df['active_verb'] = (df_notpassive & ~df['special_verb']).astype('bool')
         
     # provisions
-    df['obligation'] = ((df_notneg & df['strict_modal'] & df['active_verb']) |     
-                        (df_notneg & df['strict_modal'] & df['obligation_verb']) | 
-                        (df_notneg & ~df['md'] & df['obligation_verb'])).astype('bool')           
-    df['constraint'] = ((df_neg & df['md'] & df['active_verb']) |
-                        (df_notneg & df['strict_modal'] & df['constraint_verb']) | 
-                        (df_neg & df_passive & (df['entitlement_verb'] | df['permission_verb'] ))).astype('bool')
-    df['permission'] = ((df_notneg & ((df['permissive_modal'] & df['active_verb']) | df['permission_verb'])) | 
-                        (df['neg'] & df['constraint_verb'])).astype('bool')
-    df['entitlement'] = ((df_notneg & df['entitlement_verb']) |
-                         (df_neg & df['obligation_verb'])).astype('bool')  
-    df['other_provision'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement'])
+    df['obligation_1'] = (df_notneg & df['strict_modal'] & df['active_verb']).astype('bool')
+    df['obligation_2'] = (df_notneg & ~df['permissive_modal'] & df['obligation_verb']).astype('bool')  
+    df['obligation'] = (df['obligation_1'] | df['obligation_2']).astype('bool')
+    df['constraint_1'] = (df_neg & df['md'] & df['active_verb']).astype('bool')
+    df['constraint_2'] = (df_notneg & df['strict_modal'] & df['constraint_verb']).astype('bool')
+    df['constraint_3'] = (df_neg & df_passive & (df['entitlement_verb'] | df['permission_verb'])).astype('bool')
+    df['constraint'] = (df['constraint_1'] | df['constraint_2'] | df['constraint_3']).astype('bool')
+    df['permission_1'] = (df_notneg & df['permissive_modal'] & df['active_verb']).astype('bool')
+    df['permission_2'] = (df_notneg & df['permission_verb']).astype('bool')
+    df['permission_3'] = (df['neg'] & df['constraint_verb']).astype('bool')
+    df['permission'] = (df['permission_1'] | df['permission_2'] | df['permission_3']).astype('bool')
+    df['entitlement_1'] = (df_notneg & df['entitlement_verb']).astype('bool')
+    df['entitlement_2'] = (df_neg & df['obligation_verb']).astype('bool')
+    df['entitlement'] = (df['entitlement_1'] | df['entitlement_2']).astype('bool')
+    df['other_provision'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement']).astype('bool')
+
+    # df['obligation'] = ((df_notneg & df['strict_modal'] & df['active_verb']) |     
+    #                     (df_notneg & ~df['permissive_modal'] & df['obligation_verb'])).astype('bool')           
+    # df['constraint'] = ((df_neg & df['md'] & df['active_verb']) |
+    #                     (df_notneg & df['strict_modal'] & df['constraint_verb']) | 
+    #                     (df_neg & df_passive & (df['entitlement_verb'] | df['permission_verb'] ))).astype('bool')
+    # df['permission'] = ((df_notneg & ((df['permissive_modal'] & df['active_verb']) | df['permission_verb'])) | 
+    #                     (df_neg & df['constraint_verb'])).astype('bool')
+    # df['entitlement'] = ((df_notneg & df['entitlement_verb']) |
+    #                      (df_neg & df['obligation_verb'])).astype('bool')  
+    # df['other_provision'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement'])
     
     df.to_pickle(os.path.join(args.output_directory, "04_auth", filename.replace("pdata_", "auth_")))
 

@@ -37,7 +37,13 @@ class Pipeline():
 
 	def determine_subject_verb_prefixes(self):
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))
-		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'vlem']]
+		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'vlem', 
+		    'obligation_1', 'obligation_2', 'constraint_1', 'constraint_2', 'constraint_3', 'permission_1', 
+			'permission_2', 'permission_3', 'entitlement_1', 'entitlement_2']]
+		provisions = ['obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'obligation_1',
+			'obligation_2', 'constraint_1', 'constraint_2', 'constraint_3', 'permission_1', 
+			'permission_2', 'permission_3', 'entitlement_1', 'entitlement_2']
+		df_prefixes[provisions] = df_prefixes[provisions].astype(int)
 		
 		# replaces boolean values with text
 		df['neg'] = df['neg'].apply(lambda x: 'não' if x else '')
@@ -51,23 +57,33 @@ class Pipeline():
 		df_prefixes['subject_verb_prefix'] = [re.sub(' +', ' ', x.lower()) for x in prefix_components]
 
 		# creates dummy variables for agents
-		subject_df = pd.get_dummies(df['subnorm']).astype('bool')
+		subject_df = pd.get_dummies(df['subnorm'])
 		df_prefixes = pd.concat([df_prefixes, subject_df], axis=1)
 
 		# counts and sorts subject verb prefixes
-		df_grouped = df_prefixes.groupby('subject_verb_prefix').size().reset_index()
-		df_grouped.columns = ['subject_verb_prefix', 'count']
-		df_prefixes = pd.merge(df_prefixes, df_grouped, on='subject_verb_prefix')
-		df_prefixes = df_prefixes.drop_duplicates(subset='subject_verb_prefix')
-		df_prefixes = df_prefixes.sort_values(by='count', ascending=False).reset_index(drop=True)
+		df_prefixes['count'] = df_prefixes.groupby('subject_verb_prefix')['subject_verb_prefix'].transform('size')
+		df_prefixes.drop_duplicates(subset='subject_verb_prefix', inplace=True)
+		df_prefixes.sort_values(by='count', ascending=False, inplace=True)
 
-		df_prefixes.to_csv(os.path.join(self.args.output_directory, "05_subject_verb_prefixes.csv"))
+		# saves combined DataFrame and DataFrames for each agent type
+		df_prefixes.head(10000).to_csv(os.path.join(self.args.output_directory, "05_subject_verb_prefixes.csv"), index=False)
+		df_worker = df_prefixes[df_prefixes['worker'] == 1].head(5000)
+		df_worker.to_csv(os.path.join(self.args.output_directory, "05_worker_subject_verb_prefixes.csv"), index=False)
+		df_firm = df_prefixes[df_prefixes['firm'] == 1].head(5000)
+		df_firm.to_csv(os.path.join(self.args.output_directory, "05_firm_subject_verb_prefixes.csv"), index=False)
+		df_union = df_prefixes[df_prefixes['union'] == 1].head(5000)
+		df_union.to_csv(os.path.join(self.args.output_directory, "05_union_subject_verb_prefixes.csv"), index=False)
+		df_manager = df_prefixes[df_prefixes['manager'] == 1].head(5000)
+		df_manager.to_csv(os.path.join(self.args.output_directory, "05_manager_subject_verb_prefixes.csv"), index=False)
 
 	def aggregate_measures(self):
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))		
-		print(df)
-		print(df.columns)
-		subjects = ["worker", 'firm', 'union', 'manager']
+		to_keep = ['contract_id', 'md', 'passive', 'neg', 'strict_modal', 'permissive_modal', 'obligation_verb', 
+	     	'constraint_verb', 'permission_verb', 'entitlement_verb', 'promise_verb', 'special_verb', 'active_verb', 
+			'obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'subnorm']
+		df = df[to_keep]
+
+		subjects = ['worker', 'firm', 'union', 'manager']
 		statements = ['obligation', 'constraint', 'permission', 'entitlement']
 
 		# adds subject-mesaure counts
@@ -78,13 +94,12 @@ class Pipeline():
 				df[new_col_name] = [(1 * i) if j == cur_subnorm else (0 * i) for i, j in zip(df[cur_measure], df["subnorm"])]
 		
 		# adds subnorm counts
-		for cur_subnorm in subjects:
+		all_subjects = ['worker', 'firm', 'union', 'manager', 'other_agent']
+		for cur_subnorm in all_subjects:
 			df[cur_subnorm + "_count"] = [1 if i == cur_subnorm else 0 for i in df["subnorm"]]
 		df["num_statements"] = [1] * len(df)
 		df = df.groupby("contract_id", as_index=False).sum()
 		df["contract_id"] = df["contract_id"].str.replace("_cleaned.txt", "", regex=True)
-		print(df)
-		print(df.columns)
 		df.to_csv(os.path.join(self.args.output_directory, "05_aggregated.csv"))
 
 	def run_main(self):
