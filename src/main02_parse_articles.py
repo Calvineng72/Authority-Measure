@@ -105,7 +105,12 @@ def parse_article(filename, nlp, args):
 
     if filename.endswith(".txt"):
         with open(filepath, encoding='utf-8') as f:
-            art_nlp = nlp(f.read())
+            try:
+                art_nlp = nlp(f.read())
+            except Exception as e:
+                print(f"Error occurred: {str(e)}")
+                print(filename)
+
         contract_id = os.path.basename(filename) 
         art_statements = get_statements(art_nlp, contract_id, nlp)
         statement_list.extend(art_statements)            
@@ -213,18 +218,34 @@ def parse_by_subject(sent, nlp):
                 mlem = 'ir'
                 hlem = 'se'
                 verb_stem = verb_text.replace('-se-á', '')
-                vlem = nlp(verb_stem)[0].lemma_.lower()
+                try:
+                    vlem = nlp(verb_stem)[0].lemma_.lower()
+                except Exception as e:
+                    print(f"Error occurred: {str(e)}")
+                    print(sent)
+                    continue
             elif verb_text.endswith('-se-ão'):
                 mlem = 'ir'
                 hlem = 'se'
                 verb_stem = verb_text.replace('-se-ão', '')
-                vlem = nlp(verb_stem)[0].lemma_.lower()
+                try:
+                    vlem = nlp(verb_stem)[0].lemma_.lower()
+                except Exception as e:
+                    print(f"Error occurred: {str(e)}")
+                    print(sent)
+                    continue
 
         # checks for -se at the end of or in the middle of a verb phrase
         if helping_verb is None and '-se' in verb_text:
             hlem = 'se'
             verb_stem = verb_text.split('-')[0]
-            vlem = nlp(verb_stem)[0].lemma_.lower()
+            try:
+                vlem = nlp(verb_stem)[0].lemma_.lower()
+            except Exception as e:
+                print(f"Error occurred: {str(e)}")
+                print(sent)
+                continue
+
         
         tokenlists = defaultdict(list)                        
         neg = ''
