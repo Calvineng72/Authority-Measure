@@ -38,17 +38,20 @@ worker = ['admitida', 'admitidas', 'admitido', 'admitidos', 'aposentada', 'apose
           'aprendiz', 'aprendizes', 'contratada', 'contratadas', 'contratado', 'contratados', 'dimitida', 'dimitidas', 
           'dimitido', 'dimitidos', 'empregada', 'empregadas', 'empregado', 'empregados', 'empregar', 'estagiária', 
           'estagiárias', 'estagiário', 'estagiários', 'funcionária', 'funcionárias', 'funcionário', 'funcionários',
-          'pessoal', 'suplente', 'suplentes', 'trabalhador', 'trabalhadora', 'trabalhadoras', 'trabalhadores']
+          'pessoal', 'suplente', 'suplentes', 'trabalhador', 'trabalhadora', 'trabalhadoras', 'trabalhadores', 'operário',
+          'operários', 'operária', 'operárias']
 firm = ['companhia', 'companhias', 'concessionária', 'concessionárias', 'concessionário', 'concessionários', 'corporação', 
         'corporações', 'corporativa', 'corporativas', 'corporativo', 'corporativos', 'empregador', 'empregadora', 'empregadoras', 
         'empregadores', 'empresa', 'empresar', 'empresária', 'empresárias', 'empresário', 'empresários', 'empresas', 
         'estabelecimento', 'estabelecimentos', 'firma', 'firmas', 'patrão', 'patroa', 'patroas', 'patrões', 'proprietária',
-        'proprietárias', 'proprietário', 'proprietários']
+        'proprietárias', 'proprietário', 'proprietários', 'contratante', 'contratantes']
 union = ['confederação', 'confederações', 'cooperativa', 'cooperativas', 'delegado', 'delegados', 'dirigente', 'dirigentes', 
-         'federação', 'federações', 'grêmio', 'líder', 'líderes', 'representante', 'representantes', 'sindicato', 'sindicatos']
+         'federação', 'federações', 'grêmio', 'líder', 'líderes', 'representante', 'representantes', 'sindicato', 'sindicatos',
+         'cipa', 'cipeiro', 'sindicalizado', 'sindicalizados', 'sindicalizada', 'sindicalizadas', 'assembleia', 'assembleias']
 manager = ['chefe', 'chefes', 'diretor', 'diretora', 'diretoras', 'diretores', 'diretoria', 'diretorias', 'gerência', 'gerências',
            'gerenciador', 'gerenciadora', 'gerenciadoras', 'gerenciadores', 'gerente', 'gerentes', 'manager', 'managers', 
-           'superintendência', 'superintendente', 'superintendentes', 'supervisor', 'supervisora', 'supervisoras', 'supervisores']
+           'superintendência', 'superintendente', 'superintendentes', 'supervisor', 'supervisora', 'supervisoras', 'supervisores',
+           'conselho', 'conselhos']
 
 subnorm_map = {}
 for i in worker:
@@ -135,17 +138,18 @@ def compute_statement_auth(args, df, filename):
 
     # obligation verbs 
     df['obligation_verb'] = ((df_passive & df['vlem'].isin(['exigir', 'esperar', 'coagir', 'obrigar', 'compelir', 'obrigado'])) 
-                             | (df_notpassive & df['vlem'].isin(['concordar', 'prometer']))).astype('bool')
+                             | (df_notpassive & df['vlem'].isin(['concordar', 'prometer', 'consentir', 'aquiescer']))).astype('bool')
 
     # constraint verbs 
     df['constraint_verb'] = (df_passive & 
-                      df['vlem'].isin(['proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar'])).astype('bool')
+                      df['vlem'].isin(['proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar',
+                                       'impossibilitar', 'negar'])).astype('bool')
         
     # permissiion verbs
     df['permission_verb'] = (df_passive & df['vlem'].isin(['permitir', 'autorizar', 'aprovar', 'habilitar'])).astype('bool')
 
     # entitlement verbs    
-    df['entitlement_verb'] =  ((df_notpassive & df['vlem'].isin(['receber', 'ganhar', 'obter'])) 
+    df['entitlement_verb'] =  ((df_notpassive & df['vlem'].isin(['receber', 'ganhar', 'obter', 'gozar', 'beneficiar', 'repousar'])) 
                                | (df_passive & df['vlem'].isin(['conceder', 'dar', 'oferecer', 'reembolsar', 'pagar', 'outorgar', 
                                                                 'fornecer', 'compensar', 'garantir', 'contratar', 'treinar', 'suprir', 
                                                                 'proteger', 'cobrir', 'informar', 'notificar', 'selecionar', 
