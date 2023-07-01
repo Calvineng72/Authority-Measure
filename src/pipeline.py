@@ -39,14 +39,14 @@ class Pipeline():
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))
 		df_prefixes = df[['obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'vlem', 
 		    'obligation_1', 'obligation_2', 'constraint_1', 'constraint_2', 'constraint_3', 'permission_1', 
-			'permission_2', 'permission_3', 'entitlement_1', 'entitlement_2']]
+			'permission_2', 'permission_3', 'entitlement_1', 'entitlement_2', 'entitlement_3']]
 		provisions = ['obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'obligation_1',
 			'obligation_2', 'constraint_1', 'constraint_2', 'constraint_3', 'permission_1', 
-			'permission_2', 'permission_3', 'entitlement_1', 'entitlement_2']
+			'permission_2', 'permission_3', 'entitlement_1', 'entitlement_2', 'entitlement_3']
 		df_prefixes[provisions] = df_prefixes[provisions].astype(int)
 		
 		# replaces boolean values with text
-		df['neg'] = df['neg'].apply(lambda x: 'não' if x else '')
+		df['neg'] = np.where(df['neg'], 'não', '')
 
 		# forms subject verb prefixes
 		prefix_components = np.where(
@@ -54,7 +54,7 @@ class Pipeline():
 			df['neg'] + ' ' + df['subject'] + ' ' + df['modal'] + ' ' + df['helping_verb'] + ' ' + df['verb'],
 			df['subject'] + ' ' + df['neg'] + ' ' + df['modal'] + ' ' + df['helping_verb'] + ' ' + df['verb']
 		)
-		df_prefixes['subject_verb_prefix'] = [re.sub(' +', ' ', x.lower()) for x in prefix_components]
+		df_prefixes['subject_verb_prefix'] = [re.sub(' +', ' ', x.lower().strip()) for x in prefix_components]
 
 		# creates dummy variables for agents
 		subject_df = pd.get_dummies(df['subnorm'])

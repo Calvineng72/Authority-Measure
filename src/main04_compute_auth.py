@@ -26,28 +26,27 @@ def combine_auth(args):
 
     auth_df.to_pickle(os.path.join(args.output_directory, "04_auth.pkl"))
 
-# worker = ['empregado', 'trabalhador', 'motorista', 'funcionário', 'empregada', 'empregados-jornalistas', 
-#           'equipe', 'empregados-jornalista', 'professor', 'enfermeiro', 'mecânico', 'operador', 'comissário', 'pessoal',
-#           'docente', 'professor', 'contratado', 'jornalista', 'aprendiz', 'empregados', 'empregadas', 'médico', 'empregar']
-# firm = ['empregador', 'empresa', 'conselho', 'hospital', 'corporação', 'proprietário', 'superintendente', 'empregadora', 
-#         'companhia', 'firma', 'empresas', 'concessionária', 'empresário'] 
-# union = ['sindicato', 'associação', 'membro', 'representante', 'dirigente']
-# manager = ['gerente', 'gestão', 'administração', 'administrador', 'supervisor', 'diretor', 'principal', 'gestor']
-
 worker = ['admitida', 'admitidas', 'admitido', 'admitidos', 'aposentada', 'aposentadas', 'aposentado', 'aposentados', 
           'aprendiz', 'aprendizes', 'contratada', 'contratadas', 'contratado', 'contratados', 'dimitida', 'dimitidas', 
           'dimitido', 'dimitidos', 'empregada', 'empregadas', 'empregado', 'empregados', 'empregar', 'estagiária', 
           'estagiárias', 'estagiário', 'estagiários', 'funcionária', 'funcionárias', 'funcionário', 'funcionários',
           'pessoal', 'suplente', 'suplentes', 'trabalhador', 'trabalhadora', 'trabalhadoras', 'trabalhadores', 'operário',
-          'operários', 'operária', 'operárias']
+          'operários', 'operária', 'operárias', 'motorista', 'motoristas', 'professor', 'professores', 'professora', 'professoras',
+          'gestante', 'gestantes', 'cobrador', 'cobradores', 'docente', 'docentes', 'estudante', 'estudantes', 
+          'colaborador', 'colaboradora', 'colaboradores', 'colaboradoras', 'operador', 'operadora', 'operadores', 'operadoras',
+          'auxiliar', 'auxiliares', 'jornalista', 'jornalistas', 'vendedor', 'vendedora', 'vendedores', 'vendedoras', 
+          'servidor', 'servidora', 'servidores', 'servidoras', 'participante', 'participantes', 'dependente', 'dependentes',
+          'comissionista', 'comissionistas', 'aposentado', 'aposentada', 'aposentados', 'aposentadas', 'acidentado', 'acidentada',
+          'acidentados', 'acidentadas', 'substituto', 'substituta', 'substitutos', 'substitutas']
 firm = ['companhia', 'companhias', 'concessionária', 'concessionárias', 'concessionário', 'concessionários', 'corporação', 
         'corporações', 'corporativa', 'corporativas', 'corporativo', 'corporativos', 'empregador', 'empregadora', 'empregadoras', 
         'empregadores', 'empresa', 'empresar', 'empresária', 'empresárias', 'empresário', 'empresários', 'empresas', 
         'estabelecimento', 'estabelecimentos', 'firma', 'firmas', 'patrão', 'patroa', 'patroas', 'patrões', 'proprietária',
-        'proprietárias', 'proprietário', 'proprietários', 'contratante', 'contratantes']
+        'proprietárias', 'proprietário', 'proprietários', 'contratante', 'contratantes', 'hospital', 'hospitais', 'escola',
+        'escolas']
 union = ['confederação', 'confederações', 'cooperativa', 'cooperativas', 'delegado', 'delegados', 'dirigente', 'dirigentes', 
          'federação', 'federações', 'grêmio', 'líder', 'líderes', 'representante', 'representantes', 'sindicato', 'sindicatos',
-         'cipa', 'cipeiro', 'sindicalizado', 'sindicalizados', 'sindicalizada', 'sindicalizadas', 'assembleia', 'assembleias']
+         'cipa', 'cipeiro', 'sindicalizado', 'sindicalizados', 'sindicalizada', 'sindicalizadas', 'assembleia', 'assembleias'] 
 manager = ['chefe', 'chefes', 'diretor', 'diretora', 'diretoras', 'diretores', 'diretoria', 'diretorias', 'gerência', 'gerências',
            'gerenciador', 'gerenciadora', 'gerenciadoras', 'gerenciadores', 'gerente', 'gerentes', 'manager', 'managers', 
            'superintendência', 'superintendente', 'superintendentes', 'supervisor', 'supervisora', 'supervisoras', 'supervisores',
@@ -137,66 +136,67 @@ def compute_statement_auth(args, df, filename):
     df_notneg = ~df_neg
 
     # obligation verbs 
-    df['obligation_verb'] = ((df_passive & df['vlem'].isin(['exigir', 'esperar', 'coagir', 'obrigar', 'compelir', 'obrigado'])) 
-                             | (df_notpassive & df['vlem'].isin(['concordar', 'prometer', 'consentir', 'aquiescer']))).astype('bool')
+    df['obligation_verb'] = ((df_passive & df['vlem'].isin(['exigir', 'esperar', 'coagir', 'obrigar', 'compelir', 'obrigado',
+                                                            'forçar', 'requerer', 'comprometar', 'comprometer', 'responsabilizar'])) 
+                             | (df_notpassive & df['vlem'].isin(['garantir', 'assegurar']))).astype('bool')
 
     # constraint verbs 
-    df['constraint_verb'] = (df_passive & 
-                      df['vlem'].isin(['proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar',
-                                       'impossibilitar', 'negar'])).astype('bool')
+    df['constraint_verb'] = (df_passive & df['vlem'].isin(['proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar',
+                                                           'impossibilitar', 'negar', 'abster'])).astype('bool')
         
     # permissiion verbs
-    df['permission_verb'] = (df_passive & df['vlem'].isin(['permitir', 'autorizar', 'aprovar', 'habilitar'])).astype('bool')
+    df['permission_verb'] = ((df_passive & df['vlem'].isin(['permitir', 'autorizar', 'aprovar', 'habilitar'])) 
+                             | df_notpassive & df['vlem'].isin(['poder'])).astype('bool')
 
     # entitlement verbs    
-    df['entitlement_verb'] =  ((df_notpassive & df['vlem'].isin(['receber', 'ganhar', 'obter', 'gozar', 'beneficiar', 'repousar'])) 
-                               | (df_passive & df['vlem'].isin(['conceder', 'dar', 'oferecer', 'reembolsar', 'pagar', 'outorgar', 
-                                                                'fornecer', 'compensar', 'garantir', 'contratar', 'treinar', 'suprir', 
-                                                                'proteger', 'cobrir', 'informar', 'notificar', 'selecionar', 
-                                                                'entregar', 'proteger', 'pagar', 'premiar',
-                                                                'facultar', 'garantido', 'proporcionar', 'prestar', 'propiciar',
-                                                                'providenciar', 'fornecir']))).astype('bool')
+    df['entitlement_verb'] =  ((df_notpassive & df['vlem'].isin(['ter', 'receber', 'ganhar', 'obter', 'gozar', 'beneficiar', 'repousar']))
+                               | (df_passive & df['vlem'].isin(['conceder', 'dar', 'outorgar', 'fornecer', 'garantir', 'garantido', 
+                                                                'proteger', 'cobrir', 'informar', 'notificar', 'assegurar',
+                                                                'facultar', 'proporcionar', 'prestar', 'propiciar', 'providenciar', 
+                                                                'fornecir', 'avisar']))).astype('bool')
 
     # promise verbs
-    df['promise_verb'] = (df_notpassive & 
-                  df['vlem'].isin(['reconhecer',
-                              'consentir', 'afirmar',
-                              'garantir', 'segurar', 'assegurar', 'estipular',
-                              'assumir'])).astype('bool')
+    df['promise_verb'] = (df_notpassive & df['vlem'].isin(['reconhecer', 'consentir', 'afirmar', 'segurar', 'estipular', 'assumir', 
+                                                            'concordar', 'prometer', 'consentir', 'aquiescer'])).astype('bool')
+
+    # negative verbs
+    df['negative_verb'] = ((df_notpassive & df['vlem'].isin(['trabalhar', 'sofrer', 'perder'])) 
+                           | df_passive & df['vlem'].isin(['despedir', 'despeder', 'dispensar', 'dispensado', 'dispensados'])).astype('bool') 
+
+    # verbs to be removed and classified as an 'other provision'
+    df['to_remove'] = (df_notpassive & df['vlem'].isin(['fazer', 'ficar', 'fica', 'ficam', 'estar', 'estão', 'estarão', 
+                                                        'ser', 'é', 'são', 'será', 'serão'])).astype('bool') 
 
     # special verbs
     df['special_verb'] = (df['obligation_verb'] | df['constraint_verb'] | df['permission_verb'] | df['entitlement_verb'] | df['promise_verb']).astype('bool')
       
     # active verbs 
-    df['active_verb'] = (df_notpassive & ~df['special_verb']).astype('bool')
+    df['active_verb'] = (df_notpassive & ~df['special_verb'] & ~df['to_remove']).astype('bool')
         
-    # provisions
-    df['obligation_1'] = (df_notneg & df['strict_modal'] & df['active_verb']).astype('bool')
-    df['obligation_2'] = (df_notneg & ~df['permissive_modal'] & df['obligation_verb']).astype('bool')  
+    # obligations
+    df['obligation_1'] = (df_notneg & df['strict_modal'] & df['active_verb']).astype('bool') 
+    df['obligation_2'] = (df_notneg & ~df['permissive_modal'] & (df['obligation_verb'] | df['promise_verb'])).astype('bool')  
     df['obligation'] = (df['obligation_1'] | df['obligation_2']).astype('bool')
-    df['constraint_1'] = (df_neg & df['md'] & df['active_verb']).astype('bool')
+
+    # constraints
+    df['constraint_1'] = (df_neg & df['md'] & (~df['obligation_verb'] & ~df['negative_verb'])).astype('bool')
     df['constraint_2'] = (df_notneg & df['strict_modal'] & df['constraint_verb']).astype('bool')
-    df['constraint_3'] = (df_neg & df_passive & (df['entitlement_verb'] | df['permission_verb'])).astype('bool')
+    df['constraint_3'] = (df_neg & df['permission_verb']).astype('bool')
     df['constraint'] = (df['constraint_1'] | df['constraint_2'] | df['constraint_3']).astype('bool')
+
+    # permissions
     df['permission_1'] = (df_notneg & df['permissive_modal'] & df['active_verb']).astype('bool')
     df['permission_2'] = (df_notneg & df['permission_verb']).astype('bool')
-    df['permission_3'] = (df['neg'] & df['constraint_verb']).astype('bool')
+    df['permission_3'] = (df_neg & df['constraint_verb']).astype('bool')
     df['permission'] = (df['permission_1'] | df['permission_2'] | df['permission_3']).astype('bool')
-    df['entitlement_1'] = (df_notneg & df['entitlement_verb']).astype('bool')
-    df['entitlement_2'] = (df_neg & df['obligation_verb']).astype('bool')
-    df['entitlement'] = (df['entitlement_1'] | df['entitlement_2']).astype('bool')
-    df['other_provision'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement']).astype('bool')
 
-    # df['obligation'] = ((df_notneg & df['strict_modal'] & df['active_verb']) |     
-    #                     (df_notneg & ~df['permissive_modal'] & df['obligation_verb'])).astype('bool')           
-    # df['constraint'] = ((df_neg & df['md'] & df['active_verb']) |
-    #                     (df_notneg & df['strict_modal'] & df['constraint_verb']) | 
-    #                     (df_neg & df_passive & (df['entitlement_verb'] | df['permission_verb'] ))).astype('bool')
-    # df['permission'] = ((df_notneg & ((df['permissive_modal'] & df['active_verb']) | df['permission_verb'])) | 
-    #                     (df_neg & df['constraint_verb'])).astype('bool')
-    # df['entitlement'] = ((df_notneg & df['entitlement_verb']) |
-    #                      (df_neg & df['obligation_verb'])).astype('bool')  
-    # df['other_provision'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement'])
+    # entitlements
+    df['entitlement_1'] = (df_notneg & df['entitlement_verb']).astype('bool')
+    df['entitlement_2'] = (df_notneg & df['strict_modal'] & df['passive'] & (~df['special_verb'] & ~df['negative_verb'])).astype('bool')
+    df['entitlement_3'] = (df_neg & (df['obligation_verb'] | df['negative_verb'])).astype('bool')
+    df['entitlement'] = (df['entitlement_1'] | df['entitlement_2'] | df['entitlement_3']).astype('bool')
+
+    df['other_provision'] = ~(df['obligation'] | df['constraint'] | df['permission'] | df['entitlement']).astype('bool')
     
     df.to_pickle(os.path.join(args.output_directory, "04_auth", filename.replace("pdata_", "auth_")))
 
