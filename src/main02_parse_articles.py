@@ -11,13 +11,13 @@ from collections import defaultdict
 # python src/main02_parse_articles.py --input_directory cleaned_cba_samples --output_directory output
 
 # subject dependencies
-subdeps = ['nsubj', 'nsubj:pass']
+subdeps = {'nsubj', 'nsubj:pass'}
 
 # to be words 
-to_be = ['estar', 'estão', 'ser', 'é', 'são', 'será', 'serão', 'ficar', 'fica', 'ficam']
+to_be = {'estar', 'estará', 'estarão', 'está', 'estão', 'ser', 'será', 'serão', 'é', 'são' 'ficar', 'ficará', 'ficarão' 'fica', 'ficam'}
 
 # modal verbs ('ter que' and 'ir' are checked for seperately)
-modal_verbs = ['dever', 'poder']
+modal_verbs = {'dever', 'deverá', 'deverão', 'deve', 'devem', 'poder', 'poderá', 'poderão', 'pode', 'podem'}
  
 def get_statements(art_nlp, contract_id, nlp):
     """
@@ -208,9 +208,6 @@ def parse_by_subject(sent, nlp):
             data['passive'] = 1
         if mlem != "":
             data['md'] = 1
-
-        if original_slem == 'integrante':
-            print(sent)
 
         datalist.append(data)
     

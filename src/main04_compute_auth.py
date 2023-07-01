@@ -88,10 +88,8 @@ def check_strict_modal(statement_row):
     Returns:
         True if the statement row contains a strict modal verb, False otherwise.
     """
-    strict_modal = False
-    if statement_row['md']:
-        strict_modal = statement_row['mlem'] in ['dever', 'ter que', 'ir']
-    return strict_modal
+    strict_modals = {'dever', 'deverá', 'deverão', 'deve', 'devem', 'ter que', 'ir'}
+    return statement_row['md'] and statement_row['mlem'] in strict_modals
 
 def check_neg(statement_row):
     """
@@ -137,36 +135,37 @@ def compute_statement_auth(args, df, filename):
     df_notneg = ~df_neg
 
     # obligation verbs 
-    df['obligation_verb'] = ((df_passive & df['vlem'].isin(['exigir', 'esperar', 'coagir', 'obrigar', 'compelir', 'obrigado',
-                                                            'forçar', 'requerer', 'comprometar', 'comprometer', 'responsabilizar'])) 
-                             | (df_notpassive & df['vlem'].isin(['garantir', 'assegurar']))).astype('bool')
+    df['obligation_verb'] = ((df_passive & df['vlem'].isin({'exigir', 'esperar', 'coagir', 'compelir', 'obrigar', 'obrigado',
+                                                            'forçar', 'requerer', 'comprometar', 'comprometer', 'responsabilizar'})) 
+                             | (df_notpassive & df['vlem'].isin({'garantir', 'assegurar'}))).astype('bool')
 
     # constraint verbs 
-    df['constraint_verb'] = (df_passive & df['vlem'].isin(['proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar',
-                                                           'impossibilitar', 'negar', 'abster'])).astype('bool')
+    df['constraint_verb'] = (df_passive & df['vlem'].isin({'proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar',
+                                                           'impossibilitar', 'negar', 'abster'})).astype('bool')
         
     # permissiion verbs
-    df['permission_verb'] = ((df_passive & df['vlem'].isin(['permitir', 'autorizar', 'aprovar', 'habilitar'])) 
-                             | df_notpassive & df['vlem'].isin(['poder'])).astype('bool')
+    df['permission_verb'] = ((df_passive & df['vlem'].isin({'permitir', 'autorizar', 'aprovar', 'habilitar'})) 
+                             | df_notpassive & df['vlem'].isin({'poder'})).astype('bool')
 
     # entitlement verbs    
-    df['entitlement_verb'] =  ((df_notpassive & df['vlem'].isin(['ter', 'receber', 'ganhar', 'obter', 'gozar', 'beneficiar', 'repousar']))
-                               | (df_passive & df['vlem'].isin(['conceder', 'dar', 'outorgar', 'fornecer', 'garantir', 'garantido', 
+    df['entitlement_verb'] =  ((df_notpassive & df['vlem'].isin({'ter', 'receber', 'ganhar', 'obter', 'gozar', 'beneficiar', 'repousar'}))
+                               | (df_passive & df['vlem'].isin({'conceder', 'dar', 'outorgar', 'fornecer', 'garantir', 'garantido', 
                                                                 'proteger', 'cobrir', 'informar', 'notificar', 'assegurar',
                                                                 'facultar', 'proporcionar', 'prestar', 'propiciar', 'providenciar', 
-                                                                'fornecir', 'avisar']))).astype('bool')
+                                                                'fornecir', 'avisar'}))).astype('bool')
 
     # promise verbs
-    df['promise_verb'] = (df_notpassive & df['vlem'].isin(['reconhecer', 'consentir', 'afirmar', 'segurar', 'estipular', 'assumir', 
-                                                            'concordar', 'prometer', 'consentir', 'aquiescer'])).astype('bool')
+    df['promise_verb'] = (df_notpassive & df['vlem'].isin({'reconhecer', 'consentir', 'afirmar', 'segurar', 'estipular', 'assumir', 
+                                                            'concordar', 'prometer', 'consentir', 'aquiescer'})).astype('bool')
 
     # negative verbs
-    df['negative_verb'] = ((df_notpassive & df['vlem'].isin(['trabalhar', 'sofrer', 'perder'])) 
-                           | df_passive & df['vlem'].isin(['despedir', 'despeder', 'dispensar', 'dispensado', 'dispensados'])).astype('bool') 
+    df['negative_verb'] = ((df_notpassive & df['vlem'].isin({'trabalhar', 'sofrer', 'perder'})) 
+                           | df_passive & df['vlem'].isin({'despedir', 'despeder', 'dispensar', 'dispensado', 'dispensados'})).astype('bool') 
 
     # verbs to be removed and classified as an 'other provision'
-    df['to_remove'] = (df_notpassive & df['vlem'].isin(['fazer', 'ficar', 'fica', 'ficam', 'estar', 'estão', 'estarão', 
-                                                        'ser', 'é', 'são', 'será', 'serão'])).astype('bool') 
+    df['to_remove'] = (df_notpassive & df['vlem'].isin({'fazer', 'fará', 'farão', 'faz', 'fazem', 'estar', 'estará', 'estarão', 
+                                                        'está', 'estão', 'ser', 'será', 'serão', 'é', 'são' 'ficar', 'ficará', 
+                                                        'ficarão' 'fica', 'ficam'})).astype('bool') 
 
     # special verbs
     df['special_verb'] = (df['obligation_verb'] | df['constraint_verb'] | df['permission_verb'] | df['entitlement_verb'] | df['promise_verb']).astype('bool')
@@ -193,7 +192,7 @@ def compute_statement_auth(args, df, filename):
 
     # entitlements
     df['entitlement_1'] = (df_notneg & df['entitlement_verb']).astype('bool')
-    df['entitlement_2'] = (df_notneg & ~df['permissive_modal'] & df['passive'] & (~df['special_verb'] & ~df['negative_verb'])).astype('bool')
+    df['entitlement_2'] = (df_notneg & df['strict_modal'] & df['passive'] & (~df['special_verb'] & ~df['negative_verb'])).astype('bool')
     df['entitlement_3'] = (df_neg & (df['obligation_verb'] | df['negative_verb'])).astype('bool')
     df['entitlement'] = (df['entitlement_1'] | df['entitlement_2'] | df['entitlement_3']).astype('bool')
 
