@@ -37,7 +37,8 @@ worker = ['admitida', 'admitidas', 'admitido', 'admitidos', 'aposentada', 'apose
           'auxiliar', 'auxiliares', 'jornalista', 'jornalistas', 'vendedor', 'vendedora', 'vendedores', 'vendedoras', 
           'servidor', 'servidora', 'servidores', 'servidoras', 'participante', 'participantes', 'dependente', 'dependentes',
           'comissionista', 'comissionistas', 'aposentado', 'aposentada', 'aposentados', 'aposentadas', 'acidentado', 'acidentada',
-          'acidentados', 'acidentadas', 'substituto', 'substituta', 'substitutos', 'substitutas']
+          'acidentados', 'acidentadas', 'substituto', 'substituta', 'substitutos', 'substitutas', 'pai', 'pais', 'mãe', 'mães',
+          'beneficiário', 'beneficiários', ]
 firm = ['companhia', 'companhias', 'concessionária', 'concessionárias', 'concessionário', 'concessionários', 'corporação', 
         'corporações', 'corporativa', 'corporativas', 'corporativo', 'corporativos', 'empregador', 'empregadora', 'empregadoras', 
         'empregadores', 'empresa', 'empresar', 'empresária', 'empresárias', 'empresário', 'empresários', 'empresas', 
@@ -192,7 +193,7 @@ def compute_statement_auth(args, df, filename):
 
     # entitlements
     df['entitlement_1'] = (df_notneg & df['entitlement_verb']).astype('bool')
-    df['entitlement_2'] = (df_notneg & df['strict_modal'] & df['passive'] & (~df['special_verb'] & ~df['negative_verb'])).astype('bool')
+    df['entitlement_2'] = (df_notneg & ~df['permissive_modal'] & df['passive'] & (~df['special_verb'] & ~df['negative_verb'])).astype('bool')
     df['entitlement_3'] = (df_neg & (df['obligation_verb'] | df['negative_verb'])).astype('bool')
     df['entitlement'] = (df['entitlement_1'] | df['entitlement_2'] | df['entitlement_3']).astype('bool')
 

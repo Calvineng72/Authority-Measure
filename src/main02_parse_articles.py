@@ -209,6 +209,9 @@ def parse_by_subject(sent, nlp):
         if mlem != "":
             data['md'] = 1
 
+        if original_slem == 'integrante':
+            print(sent)
+
         datalist.append(data)
     
     return datalist
