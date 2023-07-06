@@ -3,6 +3,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
+# command to run the file in the terminal
 # python src/main04_compute_auth.py --input_directory cleaned_cba_samples --output_directory output
 
 def combine_auth(args):
@@ -26,6 +27,7 @@ def combine_auth(args):
 
     auth_df.to_pickle(os.path.join(args.output_directory, "04_auth.pkl"))
 
+# agent dictionaries
 worker = ['admitida', 'admitidas', 'admitido', 'admitidos', 'aposentada', 'aposentadas', 'aposentado', 'aposentados', 
           'aprendiz', 'aprendizes', 'contratada', 'contratadas', 'contratado', 'contratados', 'dimitida', 'dimitidas', 
           'dimitido', 'dimitidos', 'empregada', 'empregadas', 'empregado', 'empregados', 'empregar', 'estagiária', 
@@ -38,7 +40,7 @@ worker = ['admitida', 'admitidas', 'admitido', 'admitidos', 'aposentada', 'apose
           'servidor', 'servidora', 'servidores', 'servidoras', 'participante', 'participantes', 'dependente', 'dependentes',
           'comissionista', 'comissionistas', 'aposentado', 'aposentada', 'aposentados', 'aposentadas', 'acidentado', 'acidentada',
           'acidentados', 'acidentadas', 'substituto', 'substituta', 'substitutos', 'substitutas', 'pai', 'pais', 'mãe', 'mães',
-          'beneficiário', 'beneficiários', ]
+          'beneficiário', 'beneficiários']
 firm = ['companhia', 'companhias', 'concessionária', 'concessionárias', 'concessionário', 'concessionários', 'corporação', 
         'corporações', 'corporativa', 'corporativas', 'corporativo', 'corporativos', 'empregador', 'empregadora', 'empregadoras', 
         'empregadores', 'empresa', 'empresar', 'empresária', 'empresárias', 'empresário', 'empresários', 'empresas', 
@@ -53,6 +55,7 @@ manager = ['chefe', 'chefes', 'diretor', 'diretora', 'diretoras', 'diretores', '
            'superintendência', 'superintendente', 'superintendentes', 'supervisor', 'supervisora', 'supervisoras', 'supervisores',
            'conselho', 'conselhos']
 
+# hash map from possible agents to category
 subnorm_map = {}
 for i in worker:
     subnorm_map[i] = "worker"
@@ -65,7 +68,7 @@ for i in manager:
 
 def normalize_subject(subject):
     """
-    Normalizes a subject by mapping it to predefined subnorm_map.
+    Normalizes a subject by mapping it to agent category.
 
     Arguments:
         subject: subject to be normalized
@@ -140,12 +143,11 @@ def compute_statement_auth(args, df, filename):
                              | (df_notpassive & df['vlem'].isin({'garantir', 'assegurar'}))).astype('bool')
 
     # constraint verbs 
-    df['constraint_verb'] = (df_passive & df['vlem'].isin({'proibir', 'vedar', 'banir', 'impedir', 'restringir', 'proscrever', 'limitar',
-                                                           'impossibilitar', 'negar', 'abster'})).astype('bool')
+    df['constraint_verb'] = (df_passive & df['vlem'].isin({'proibir', 'vedar', 'banir', 'impedir', 'impeder', 'restringir', 'proscrever', 
+                                                           'limitar', 'impossibilitar', 'negar', 'abster'})).astype('bool')
         
     # permissiion verbs
-    df['permission_verb'] = ((df_passive & df['vlem'].isin({'permitir', 'autorizar', 'aprovar', 'habilitar'})) 
-                             | df_notpassive & df['vlem'].isin({'poder'})).astype('bool')
+    df['permission_verb'] = (df_passive & df['vlem'].isin({'permitir', 'autorizar', 'aprovar', 'habilitar'})).astype('bool')
 
     # entitlement verbs    
     df['entitlement_verb'] =  ((df_notpassive & df['vlem'].isin({'ter', 'receber', 'ganhar', 'obter', 'gozar', 'beneficiar', 'repousar'}))
@@ -156,22 +158,22 @@ def compute_statement_auth(args, df, filename):
 
     # promise verbs
     df['promise_verb'] = (df_notpassive & df['vlem'].isin({'reconhecer', 'consentir', 'afirmar', 'segurar', 'estipular', 'assumir', 
-                                                            'concordar', 'prometer', 'consentir', 'aquiescer'})).astype('bool')
+                                                            'concordar', 'prometer', 'aquiescer'})).astype('bool')
 
     # negative verbs
     df['negative_verb'] = ((df_notpassive & df['vlem'].isin({'trabalhar', 'sofrer', 'perder'})) 
                            | df_passive & df['vlem'].isin({'despedir', 'despeder', 'dispensar', 'dispensado', 'dispensados'})).astype('bool') 
 
-    # verbs to be removed and classified as an 'other provision'
-    df['to_remove'] = (df_notpassive & df['vlem'].isin({'fazer', 'fará', 'farão', 'faz', 'fazem', 'estar', 'estará', 'estarão', 
-                                                        'está', 'estão', 'ser', 'será', 'serão', 'é', 'são' 'ficar', 'ficará', 
-                                                        'ficarão' 'fica', 'ficam'})).astype('bool') 
+    # # verbs to be removed and classified as an 'other provision'
+    # df['to_remove'] = (df_notpassive & df['vlem'].isin({'fazer', 'fará', 'farão', 'faz', 'fazem', 'estar', 'estará', 'estarão', 
+    #                                                     'está', 'estão', 'ser', 'será', 'serão', 'é', 'são' 'ficar', 'ficará', 
+    #                                                     'ficarão' 'fica', 'ficam'})).astype('bool') 
 
     # special verbs
     df['special_verb'] = (df['obligation_verb'] | df['constraint_verb'] | df['permission_verb'] | df['entitlement_verb'] | df['promise_verb']).astype('bool')
       
     # active verbs 
-    df['active_verb'] = (df_notpassive & ~df['special_verb'] & ~df['to_remove']).astype('bool')
+    df['active_verb'] = (df_notpassive & ~df['special_verb']).astype('bool') # & ~df['to_remove']
         
     # obligations
     df['obligation_1'] = (df_notneg & df['strict_modal'] & df['active_verb']).astype('bool') 
@@ -179,13 +181,13 @@ def compute_statement_auth(args, df, filename):
     df['obligation'] = (df['obligation_1'] | df['obligation_2']).astype('bool')
 
     # constraints
-    df['constraint_1'] = (df_neg & df['md'] & (~df['obligation_verb'] & ~df['negative_verb'])).astype('bool')
+    df['constraint_1'] = (df_neg & df['md'] & (~df['obligation_verb'] & ~df['negative_verb'] & ~df['constraint_verb'])).astype('bool')
     df['constraint_2'] = (df_notneg & df['strict_modal'] & df['constraint_verb']).astype('bool')
     df['constraint_3'] = (df_neg & df['permission_verb']).astype('bool')
     df['constraint'] = (df['constraint_1'] | df['constraint_2'] | df['constraint_3']).astype('bool')
 
     # permissions
-    df['permission_1'] = (df_notneg & df['permissive_modal'] & df['active_verb']).astype('bool')
+    df['permission_1'] = (df_notneg & df['permissive_modal'] & ~df['special_verb']).astype('bool')
     df['permission_2'] = (df_notneg & df['permission_verb']).astype('bool')
     df['permission_3'] = (df_neg & df['constraint_verb']).astype('bool')
     df['permission'] = (df['permission_1'] | df['permission_2'] | df['permission_3']).astype('bool')

@@ -7,11 +7,13 @@ import io
 import json
 from tqdm import tqdm
 
+# command to run the file in the terminal
 # python src/main03_get_parse_data.py --input_directory cleaned_cba_samples --output_directory output
     
 def extract_pdata(args):
     """
-    Extracts data from parsed articles and saves it into a Pandas DataFrame.
+    Extracts data from parsed articles and saves it into a Pandas DataFrame. Also produces text files with 
+    counts of occurrences of modal verbs, subjects, and verbs lemmatized. 
 
     Args:
         args: object containing the required arguments and settings
@@ -19,6 +21,7 @@ def extract_pdata(args):
     Returns:
         None
     """
+    # counters for modals, verbs, and subjects lemmatized
     mlemcount = Counter()
     vlemcount = Counter()
     slemcount = Counter()
@@ -27,14 +30,13 @@ def extract_pdata(args):
     chunk_num = 0
     pdata_rows = []
 
+    # iterates through each clause and adds its data to Pandas DataFrame
     files = os.listdir(os.path.join(args.output_directory, "02_parsed_articles"))
     filenames = [os.path.join(args.output_directory, "02_parsed_articles", fn) for fn in files]
     for filename in tqdm(filenames, total=len(filenames)):
         for statement_data in joblib.load(filename):
             contract_id = statement_data["contract_id"]
 
-            # loops over each statement, getting the subject/subject_branch/subject_tag
-            subject = statement_data['subject']
             statement_dict = {'contract_id':contract_id,
                               'subject': statement_data['subject'], 'passive': statement_data['passive'],
                               'helping_verb': statement_data['helping_verb'],
@@ -56,10 +58,11 @@ def extract_pdata(args):
                 chunk_num += 1
                 pdata_rows.clear()
 
-    # makes a Pandas df from what is left and saves it
+    # makes a Pandas DataFrame from what is left and saves it
     cur_df = pd.DataFrame(pdata_rows)
     cur_df.to_pickle(os.path.join(args.output_directory, "03_pdata", "pdata_" + str(chunk_num) + ".pkl"))
 
+    # creates text files for counts of modals, subjects, and verbs lemmatized
     slem_counts_filename = os.path.join(args.output_directory, "slem_counts.txt")
     # joblib.dump(slemcount, slem_counts_filename)    
     with io.open(slem_counts_filename, 'w', encoding='utf-8') as f:

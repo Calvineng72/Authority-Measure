@@ -9,6 +9,7 @@ from main04_compute_auth import combine_auth, compute_statement_auth
 import pandas as pd
 import numpy as np
 
+# command to run the file in the terminal
 # python src/pipeline.py --input_directory cleaned_cba_samples --output_directory output
 
 pd.options.mode.chained_assignment = None

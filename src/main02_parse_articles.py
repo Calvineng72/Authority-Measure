@@ -8,12 +8,13 @@ import io
 import spacy
 from collections import defaultdict
 
+# command to run the file in the terminal
 # python src/main02_parse_articles.py --input_directory cleaned_cba_samples --output_directory output
 
 # subject dependencies
 subdeps = {'nsubj', 'nsubj:pass'}
 
-# to be words 
+# to be words (conjugations are included for possible lemmatization errors)
 to_be = {'estar', 'estará', 'estarão', 'está', 'estão', 'ser', 'será', 'serão', 'é', 'são' 'ficar', 'ficará', 'ficarão' 'fica', 'ficam'}
 
 # modal verbs ('ter que' and 'ir' are checked for seperately)
@@ -94,7 +95,7 @@ def parse_by_subject(sent, nlp):
 
     Arguments:
         sent: input sentence to parse
-        resolve_corefs: flag indicating whether to resolve corefs (default=False)
+        nlp: spaCy natural language processer
 
     Returns:
         list of dictionaries, each representing a statement with subject-related information
@@ -119,23 +120,38 @@ def parse_by_subject(sent, nlp):
 
         # checks for modal and passive verbs
         for child in verb.children:
+            # searches for a modal verb and form of 'to be'
             if child.dep_ == 'xcomp' and verb.lemma_.lower() in modal_verbs:
                 modal = verb
                 verb = child
-                for child_child in child.children:
-                    if child_child.dep_.startswith('aux'):
-                        helping_verb = child_child
-                        break
+                for grandchild in child.children:
+                    if grandchild.dep_.startswith('aux') or grandchild.dep_ == 'cop':
+                        helping_verb = grandchild
                 break
+            # searches for a form of 'to be'
             elif child.dep_ == 'xcomp' and child.tag_ == 'VERB' and verb.lemma_.lower() in to_be:
-                helping_verb = verb
-                verb = child
+                for grandchild in child.children:
+                    if grandchild.tag_ == 'SCONJ':
+                        break
+                else:
+                    helping_verb = verb
+                    verb = child
+                    break
+                continue
+            # searches for an auxillary verb that is a form of 'to be'
             elif child.dep_.startswith('aux') and child.lemma_.lower() in to_be:
-                helping_verb = child
-                break
+                for grandchild in child.children:
+                    if grandchild.tag_ == 'SCONJ':
+                        break
+                else:
+                    helping_verb = child
+                    break
+                continue
+            # searches for 'se'
             elif child.dep_ == 'expl' and child.lemma_.lower() == "se":
                 helping_verb = child
                 break
+            # searches for a copulative verb ('to be')
             elif child.dep_ == 'cop':
                 verb = child
                 break
@@ -166,21 +182,18 @@ def parse_by_subject(sent, nlp):
             if verb_text.endswith('-se-á') or verb_text.endswith('-se-ão'):
                 mlem, hlem = 'ir', 'se'
                 if verb_text.endswith('-se-á'):
-                    verb_stem = verb_text.replace('-se-á', '')
+                    vlem = verb_text.replace('-se-á', '').lower()
                 else:
-                    verb_stem = verb_text.replace('-se-ão', '')
-                try:
-                    vlem = nlp(verb_stem)[0].lemma_.lower()
-                except Exception as e:
-                    print(f"Error occurred: {str(e)}")
-                    print(sent)
-                    continue
+                    vlem = verb_text.replace('-se-ão', '').lower()
+                # checks for irregular future tense verbs
+                vlem = 'fazer' if vlem == 'far' else ('trazer' if vlem == 'trar' else ('dizer' if vlem == 'dir' else vlem))
 
         # checks for -se at the end of or in the middle of a verb phrase
         if helping_verb is None and '-se' in verb_text:
             hlem = 'se'
             verb_stem = verb_text.split('-')[0]
             try:
+                # re-lemmatizes the verb without the '-se' ending
                 vlem = nlp(verb_stem)[0].lemma_.lower()
             except Exception as e:
                 print(f"Error occurred: {str(e)}")
@@ -192,6 +205,7 @@ def parse_by_subject(sent, nlp):
         neg = 'não' if any(t.text.lower() == 'não' for t in verb.children) else neg
         neg = 'não' if helping_verb and any(t.text.lower() == 'não' for t in helping_verb.children) else neg
 
+        # data structure to store clause information
         data = {'subject': orignial_stext,
                 'slem': original_slem,
                 'neg': neg,
@@ -204,7 +218,8 @@ def parse_by_subject(sent, nlp):
                 'passive': 0,
                 'md': 0}
         
-        if (hlem == 'se') or (hlem in to_be and not verb_text.endswith('ndo')):
+        # checks if the sentence is passive and if the sentence has a modal verb
+        if (subject.dep_ == 'nsubj:pass') or (hlem == 'se') or (hlem in to_be and not verb_text.endswith('ndo')):
             data['passive'] = 1
         if mlem != "":
             data['md'] = 1
