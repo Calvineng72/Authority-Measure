@@ -13,19 +13,6 @@ The main output files of the pipeline are:
 * $output_directory/04_auth.pkl (contains all entitlements/obligations/constraints/permissions per clause-level)
 * $output_directory/05_aggregated.pkl (contains aggregated scores by different subjects on contract-level)
 
-
-The code base does **_not_** cover:
-
-* Splitting Contracts into articles (we developed a customized solution for converting PDFs to text and splitting labor union contracts which is domain specific and does not translate well to other contracts)
-* Parallelized parsing (the computational bottleneck for large collections is spaCy dependency parsing. We computed this in parallel using linux command line tools and 96 machines)
-* Our analysis which is also heavily customized for Canadian Union Contracts and does not necessarily translate well to other domain (e.g. clustering on article headers and training LDA)
-
-
-## Update December 2023
-
-* Added aggregating scores per subject on contract level
-* Re-factored how entitlemnets are computed in src/main04_compute_auth.py
-
 ## Installation
 
 Assuming [Anaconda](https://docs.anaconda.com/anaconda/install/) and linux, the environment can be installed with the following command:
@@ -71,11 +58,5 @@ output_directory="authority_measures"
 python src/pipeline.py --use_neural_coref --input_directory $input_directory --output_directory $output_directory
 ```
 
-
 ## What probably needs to be customized for other contract collections
 * We were interested in very specific roles, e.g. worker, firm etc. This is simply a dictionary lookup of the subject of a clause, e.g. following words are considered to be *worker*: worker="employee,worker,staff,teacher,nurse,mechanic,operator,steward,personnel" Overwrite these for customized applications in the file main04_compute_auth.py
-
-
-
-
-

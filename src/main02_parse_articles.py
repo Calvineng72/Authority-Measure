@@ -15,10 +15,13 @@ from collections import defaultdict
 subdeps = {'nsubj', 'nsubj:pass'}
 
 # to be words (conjugations are included for possible lemmatization errors)
-to_be = {'estar', 'estará', 'estarão', 'está', 'estão', 'ser', 'será', 'serão', 'é', 'são' 'ficar', 'ficará', 'ficarão' 'fica', 'ficam'}
+to_be = {'estar', 'estará', 'estarão', 'está', 'estão', 'estiverem', 'ser', 'será', 'serão', 'é', 'são', 'for', 'ficar', 'ficará', 'ficarão', 'fica', 'ficam'}
 
 # modal verbs ('ter que' and 'ir' are checked for seperately)
 modal_verbs = {'dever', 'deverá', 'deverão', 'deve', 'devem', 'poder', 'poderá', 'poderão', 'pode', 'podem'}
+
+# auxillary verbs to check for
+auxillary_verbs = {'ir', 'haver', 'houverem', 'ter', 'tiverem'}
  
 def get_statements(art_nlp, contract_id, nlp):
     """
@@ -128,7 +131,7 @@ def parse_by_subject(sent, nlp):
                     if grandchild.dep_.startswith('aux') or grandchild.dep_ == 'cop':
                         helping_verb = grandchild
                 break
-            # searches for a form of 'to be'
+            # searches for a complement if the verb is a form of 'to be'
             elif child.dep_ == 'xcomp' and child.tag_ == 'VERB' and verb.lemma_.lower() in to_be:
                 for grandchild in child.children:
                     if grandchild.tag_ == 'SCONJ':
@@ -163,22 +166,22 @@ def parse_by_subject(sent, nlp):
         modal_text = modal.text if modal is not None else ""
         helping_verb_text = helping_verb.text if helping_verb is not None else ""
 
-        # checks for 'ter que'
-        if modal is None: 
+        # checks for 'ter que' and 'ter de'
+        if not mlem: 
             children_lemmas = [child.lemma_.lower() for child in verb.children]
             if 'ter' in children_lemmas and 'que' in children_lemmas:
                 children_texts = [child.text for child in verb.children]
                 ter_index = children_lemmas.index('ter')
                 modal_text, mlem = children_texts[ter_index] + ' que', 'ter que'
 
-        # checks for future tense verbs
-        if modal is None:
-            if verb_text.endswith('rá') or helping_verb_text.endswith('rá') or \
-                    verb_text.endswith('rão') or helping_verb_text.endswith('rão'):
-                mlem = 'ir'
+        # checks for forms of 'ir,' 'haver,' and 'ter' modifying verb
+        if not hlem and mlem != 'ter que':
+            for child in verb.children:
+                if child.dep_ == 'aux' and child.lemma_.lower() in auxillary_verbs:
+                    helping_verb_text, hlem = child.text, child.lemma_.lower()
 
         # checks for -se-á and -se-ão at the end of a verb
-        if helping_verb is None and modal is None:
+        if not hlem and not mlem:
             if verb_text.endswith('-se-á') or verb_text.endswith('-se-ão'):
                 mlem, hlem = 'ir', 'se'
                 if verb_text.endswith('-se-á'):
@@ -188,8 +191,15 @@ def parse_by_subject(sent, nlp):
                 # checks for irregular future tense verbs
                 vlem = 'fazer' if vlem == 'far' else ('trazer' if vlem == 'trar' else ('dizer' if vlem == 'dir' else vlem))
 
+        # checks for future tense verbs
+        if not mlem:
+            if verb_text.endswith('rá') or helping_verb_text.endswith('rá') or verb_text.endswith('-á') or  \
+                    helping_verb_text.endswith('-á') or verb_text.endswith('rão') or helping_verb_text.endswith('rão') or \
+                    verb_text.endswith('-ão') or helping_verb_text.endswith('-ão'):
+                mlem = 'ir'
+
         # checks for -se at the end of or in the middle of a verb phrase
-        if helping_verb is None and '-se' in verb_text:
+        if not hlem and '-se' in verb_text:
             hlem = 'se'
             verb_stem = verb_text.split('-')[0]
             try:
@@ -219,12 +229,16 @@ def parse_by_subject(sent, nlp):
                 'md': 0}
         
         # checks if the sentence is passive and if the sentence has a modal verb
-        if (subject.dep_ == 'nsubj:pass') or (hlem == 'se') or (hlem in to_be and not verb_text.endswith('ndo')):
+        if (subject.dep_ == 'nsubj:pass') or (hlem == 'se') or (hlem in to_be and not verb_text.endswith('ndo')) or \
+                (hlem == 'ter' and vlem == 'garantir'):
             data['passive'] = 1
         if mlem != "":
             data['md'] = 1
 
         datalist.append(data)
+
+        if verb_text == 'deverá' and helping_verb_text == '' and modal_text == '':
+            print(sent)
     
     return datalist
 

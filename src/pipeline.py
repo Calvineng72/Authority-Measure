@@ -98,10 +98,18 @@ class Pipeline():
 		all_subjects = ['worker', 'firm', 'union', 'manager', 'other_agent']
 		for cur_subnorm in all_subjects:
 			df[cur_subnorm + "_count"] = [1 if i == cur_subnorm else 0 for i in df["subnorm"]]
+
+		# creates statement count, sums by contract ID, and cleans contract ID
 		df["num_statements"] = [1] * len(df)
 		df = df.groupby("contract_id", as_index=False).sum()
 		df["contract_id"] = df["contract_id"].str.replace("_cleaned.txt", "", regex=True)
-		df.to_csv(os.path.join(self.args.output_directory, "05_aggregated.csv"))
+
+		# converts values to integers
+		columns_to_convert = df.columns.difference(['contract_id'])
+		df[columns_to_convert] = df[columns_to_convert].astype(int)
+
+		# saves DataFrame as a CSV without indices
+		df.to_csv(os.path.join(self.args.output_directory, "05_aggregated.csv"), index=False)
 
 	def run_main(self):
 		# dependency parsing
