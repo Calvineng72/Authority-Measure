@@ -228,17 +228,17 @@ def parse_by_subject(sent, nlp):
                 'passive': 0,
                 'md': 0}
         
-        # checks if the sentence is passive and if the sentence has a modal verb
+        # checks if the sentence is passive
+        # (ter + garantido is a common case counted as passive since it translates to 'to be guaranteed')
         if (subject.dep_ == 'nsubj:pass') or (hlem == 'se') or (hlem in to_be and not verb_text.endswith('ndo')) or \
                 (hlem == 'ter' and vlem == 'garantir'):
             data['passive'] = 1
+        
+        # checks if the sentence contains a modal verb
         if mlem != "":
             data['md'] = 1
 
         datalist.append(data)
-
-        if verb_text == 'deverá' and helping_verb_text == '' and modal_text == '':
-            print(sent)
     
     return datalist
 
