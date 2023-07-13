@@ -75,7 +75,7 @@ def parse_article(filename, nlp, args):
     filepath = os.path.join(args.input_directory, filename)
 
     if filename.endswith(".txt"):
-        with open(filepath, encoding='utf-8') as f:
+        with open(filepath, 'r', encoding='utf-8') as f:
             try:
                 art_nlp = nlp(f.read())
             except Exception as e:

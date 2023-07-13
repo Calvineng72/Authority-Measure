@@ -1,0 +1,138 @@
+name_pt,shortened_name_en,full_name_en,varname,subgroup,group
+Aceitação de Atestados Médicos,Medical certificates,Acceptance of medical certificates,cl_ace_ate_med,Protections,Occupational health and safety
+Acesso a Informações da Empresa,Union access to information,Access to company information,cl_ace_inf_emp,Union-firm relations,Union relations
+Acesso do Sindicato ao Local de Trabalho,Union access to workplace,Union access to workplace,cl_ace_sin_loc_tra,Union-firm relations,Union relations
+Acompanhamento de Acidentado e/ou Portador de Doença Profissional,Work-related injuries,Accompaniment of work-related injured worker,cl_aco_aci_por_doe_pro,Protections,Occupational health and safety
+Adaptação de função,Work functions adaptation,Adaptation of work functions,cl_ada_fun,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Adicional de Hora-Extra,Overtime pay,Overtime pay,cl_adi_hor_ext,Pay,"Bonuses, pays, assistances, and others"
+Adicional de Insalubridade,Hazard pay (health),Hazard pay (health risk),cl_adi_ins,Pay,"Bonuses, pays, assistances, and others"
+Adicional Noturno,Night pay,Night pay,cl_adi_not,Pay,"Bonuses, pays, assistances, and others"
+Adicional de Penosidade/Turno,Shift pay,Shift pay,cl_adi_pen_tur,Pay,"Bonuses, pays, assistances, and others"
+Adicional de Periculosidade,Hazard pay (danger),Hazard pay (danger risk),cl_adi_per,Pay,"Bonuses, pays, assistances, and others"
+Adicional de Sobreaviso,On-call pay,On-call pay,cl_adi_sob,Pay,"Bonuses, pays, assistances, and others"
+Adicional de Tempo de Serviço,Seniority pay,Seniority pay,cl_adi_tem_ser,Pay,"Bonuses, pays, assistances, and others"
+Ajuda de Custo,Subsistence allowance,Subsistence allowance,cl_aju_cus,Assistances,"Bonuses, pays, assistances, and others"
+Aplicação do Instrumento Coletivo,CBA enforcement,Application of the CBA,cl_apl_ins_col,General provisions,General provisions
+Aposentadoria,Retirement,Retirement,cl_apo,Other income,"Bonuses, pays, assistances, and others"
+Assédio Moral,Moral harassment,Moral harassment,cl_ass_mor,Working conditions,"Labor relations - working conditions, staff rules, and employment protections"
+Assédio Sexual,Sexual harassment,Sexual harassment,cl_ass_sex,Working conditions,"Labor relations - working conditions, staff rules, and employment protections"
+Atribuições da Função/Desvio de Função,Work function assignment,Assignment to (deviation from) work functions,cl_atr_fun_des_fun,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Autorização de Trabalho nos Domingos e Feriados,Sundays and holidays,Work authorization on Sundays and holidays,cl_aut_tra_nos_dom_fer,Workday,"Workday - duration, distribution, control, absences"
+Auxílio Alimentação,Food assistance,Food assistance,cl_aux_ali,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Creche,Childcare assistance,Childcare assistance,cl_aux_cre,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Doença/Invalidez,Illness assistance,Illness/disability assistance,cl_aux_doe_inv,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Educação,Education assistance,Education assistance,cl_aux_edu,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Habitação,Housing assistance,Housing assistance,cl_aux_hab,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Maternidade,Maternity assistance,Maternity assistance,cl_aux_mat,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Morte/Funeral,Funeral assistance,Death/funeral assistance,cl_aux_mor_fun,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Saúde,Health assistance,Health assistance,cl_aux_sau,Assistances,"Bonuses, pays, assistances, and others"
+Auxílio Transporte,Transportation assistance,Transportation assistance,cl_aux_tra,Assistances,"Bonuses, pays, assistances, and others"
+Avaliação de Desempenho,Performance evaluation,Performance evaluation,cl_ava_des,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Aviso Prévio,Advance notice,Advance notice,cl_avi_pre,Separations,"Employment contract - hiring, separations, contract types"
+Campanhas Educativas sobre Saúde,Health education campaigns,Health education campaigns,cl_cam_edu_sob_sau,Prevention,Occupational health and safety
+"CIPA – composição, eleição, atribuições, garantias aos cipeiros",Accident prevention committee,CIPA: accident prevention committee,cl_cip_com_ele_atr_gar_aos_cip,Prevention,Occupational health and safety
+Comissões,Fees,Fees,cl_com,Other income,"Bonuses, pays, assistances, and others"
+Comissão de Fábrica,Factory commission,Factory commission,cl_com_fab,Union organization,Union relations
+Compensação de Jornada,Workday compensation,Workday compensation,cl_com_jor,Workday,"Workday - duration, distribution, control, absences"
+Condições de Ambiente de Trabalho,Working environment conditions,Working environment conditions,cl_con_amb_tra,Prevention,Occupational health and safety
+Controle da Jornada,Workday controls,Workday controls,cl_con_jor,Workday,"Workday - duration, distribution, control, absences"
+Contribuições Sindicais,Union dues,Union fees,cl_con_sin,Union organization,Union relations
+Contrato a Tempo Parcial,Part-time,Part-time contracts,cl_con_tem_par,Contract types,"Employment contract - hiring, separations, contract types"
+13º Salário,13th month bonus,13th month bonus,cl_dec_ter_sal,Bonuses,"Bonuses, pays, assistances, and others"
+Desligamento/Demissão,Separations,Separation/dismissal,cl_des_dem,Separations,"Employment contract - hiring, separations, contract types"
+Descumprimento do Instrumento Coletivo,CBA non-compliance,Non-compliance with the CBA,cl_des_ins_col,General provisions,General provisions
+Descontos Salariais,Wage deductions,Salary deductions,cl_des_sal,Wage adjustment,"Wages, adjustments, and payment"
+Descanso Semanal,Weekly rest,Weekly rest,cl_des_sem,Workday,"Workday - duration, distribution, control, absences"
+Direito de Oposição ao Desconto de Contribuições Sindicais,Opposition to union dues,Right of opposition to union fees,cl_dir_opo_des_con_sin,Union organization,Union relations
+Duração e Concessão de Férias,Vacation days and duration,Vacation duration and concession,cl_dur_con_fer,Holidays,Holidays and leave
+Duração e Horário,Duration and schedule,Duration and schedule,cl_dur_hor,Workday,"Workday - duration, distribution, control, absences"
+Empréstimos,Loans,Loans,cl_emp,Other income,"Bonuses, pays, assistances, and others"
+Equipamentos de Proteção Individual,Equipments for individual safety,Equipments for individual safety,cl_equ_pro_ind,Prevention,Occupational health and safety
+Equipamentos de Segurança,Safety equipment,Safety equipment,cl_equ_seg,Prevention,Occupational health and safety
+Estabilidade Aborto,Abortion protections,Abortion protections,cl_est_abo,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Acidentados/Portadores Doença Profissional,Injury protections (work-related),Work-related injury protections,cl_est_aci_por_doe_pro,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Adoção,Adoption protections,Adoption protections,cl_est_ado,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Aposentadoria,Retirement protections,Retirement protections,cl_est_apo,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Aprendiz,Apprenticeship protections,Apprenticeship protections,cl_est_apr,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Geral,Employment protections,Employment protections,cl_est_ger,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Mãe,Maternity protections,Maternity protections,cl_est_mae,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Pai,Paternity protections,Paternity protections,cl_est_pai,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Portadores Doença Não Profissional,Injury protections (nonwork-related),Nonwork-related injury protections,cl_est_por_doe_nao_pro,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Estabilidade Serviço Militar,Military service protections,Military service protections,cl_est_ser_mil,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Exames Médicos,Medical exams,Medical exams,cl_exa_med,Prevention,Occupational health and safety
+Faltas,Absences,Absences,cl_fal,Workday,"Workday - duration, distribution, control, absences"
+Férias Coletivas,Collective vacations,Collective vacations,cl_fer_col,Holidays,Holidays and leave
+Ferramentas e Equipamentos de Trabalho,Tools and equipment,Tools and equipment,cl_fer_equ_tra,Working conditions,"Labor relations - working conditions, staff rules, and employment protections"
+Garantias a Diretores Sindicais,Guarantees to union officers,Guarantees to union officers,cl_gar_dir_sin,Union-firm relations,Union relations
+Garantias a Portadores de Doença não Profissional,Nonwork-related injuries,Guarantees for nonwork-related injured workers,cl_gar_por_doe_nao_pro,Protections,Occupational health and safety
+Estágio/Aprendizagem,Internships,Internship/apprenticeship,cl_gio_apr,Contract types,"Employment contract - hiring, separations, contract types"
+Gratificação de Função,Work function bonus,Work function bonus,cl_gra_fun,Bonuses,"Bonuses, pays, assistances, and others"
+Igualdade de Oportunidades,Equal opportunity,Equal opportunities,cl_igu_opo,Working conditions,"Labor relations - working conditions, staff rules, and employment protections"
+Insalubridade,Insalubrity,Insalubrity,cl_ins,Prevention,Occupational health and safety
+Intervalos para Descanso,Break intervals,Break intervals,cl_int_par_des,Workday,"Workday - duration, distribution, control, absences"
+Isonomia Salarial,Wage isonomy,Wage isonomy,cl_iso_sal,Wage adjustment,"Wages, adjustments, and payment"
+"Jornadas Especiais (mulheres, menores, estudantes)",Special shifts,"Special days (women, minors, students)",cl_jor_esp_mul_men_est,Workday,"Workday - duration, distribution, control, absences"
+Liberação de Empregados para Atividades Sindicais,Union activities leave,Union activities leave,cl_lib_emp_par_ati_sin,Union-firm relations,Union relations
+Licença Aborto,Abortion leave,Abortion leave,cl_lic_abo,Leave,Holidays and leave
+Licença Adoção,Adoption leave,Adoption leave,cl_lic_ado,Leave,Holidays and leave
+Licença Maternidade,Maternity leave,Maternity leave,cl_lic_mat,Leave,Holidays and leave
+Licença não Remunerada,Unpaid leave,Unpaid leave,cl_lic_nao_rem,Leave,Holidays and leave
+Licença Remunerada,Paid leave,Paid leave,cl_lic_rem,Leave,Holidays and leave
+Manutenção de Máquinas e Equipamentos,Machine and equipment maintenance,Machine and equipment maintenance,cl_man_maq_equ,Prevention,Occupational health and safety
+Mão-de-obra de Faixa Etária Avançada,Advanced-age workforce,Advanced-age workforce,cl_mao_obr_fai_eta_ava,Hiring,"Employment contract - hiring, separations, contract types"
+Mão-de-Obra Feminina,Female workforce,Female workforce,cl_mao_obr_fem,Hiring,"Employment contract - hiring, separations, contract types"
+Mão-de-Obra Jovem,Youth workforce,Youth workforce,cl_mao_obr_jov,Hiring,"Employment contract - hiring, separations, contract types"
+Mão-de-Obra Temporária/Terceirização,Outsourcing,Outsourcing/temporary workforce,cl_mao_obr_tem_ter,Hiring,"Employment contract - hiring, separations, contract types"
+Mecanismos de Solução de Conflitos,Conflict resolution,Mechanisms for conflict resolution,cl_mec_sol_con,General provisions,General provisions
+Normas Disciplinares,Disciplinary norms,Disciplinary norms,cl_nor_dis,Working conditions,"Labor relations - working conditions, staff rules, and employment protections"
+Normas para Admissão/Contratação,Hiring rules,Employment/hiring rules,cl_nor_par_adm_con,Hiring,"Employment contract - hiring, separations, contract types"
+Outros Adicionais,Other pays,Other pays,cl_out_adi,Pay,"Bonuses, pays, assistances, and others"
+Outros Auxílios,Other assistances,Other assistances,cl_out_aux,Assistances,"Bonuses, pays, assistances, and others"
+Outras Disposições,Other bargaining provisions,Other provisions,cl_out_dis,General provisions,General provisions
+Outras disposições sobre férias e licenças,Other time off provisions,Other provisions on holidays and leaves,cl_out_dis_sob_fer_lic,Other: holidays and leave,Holidays and leave
+Outras disposições sobre jornada,Other workday provisions,Other provisions on the workday,cl_out_dis_sob_jor,Workday,"Workday - duration, distribution, control, absences"
+Outras disposições sobre relação entre sindicato e empresa,Other union-firm provisions,Other provisions on the relationship between union and company,cl_out_dis_sob_rel_ent_sin_emp,Union-firm relations,Union relations
+Outras disposições sobre representação e organização,Other union provisions,Other provisions on representation and organization,cl_out_dis_sob_rep_org,Union organization,Union relations
+Outras estabilidades,Other employment protections,Other employment protections,cl_out_est,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Outras Gratificações,Other bonuses,Other bonuses,cl_out_gra,Bonuses,"Bonuses, pays, assistances, and others"
+Outros grupos específicos,Other workforces,Other specific worker groups,cl_out_gru_esp,Hiring,"Employment contract - hiring, separations, contract types"
+Outras normas de pessoal,Other staffing rules,Other staffing rules,cl_out_nor_pes,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Outras Normas de Prevenção de Acidentes e Doenças Profissionais,Other injury prevention standards,Other standards for the prevention of injuries,cl_out_nor_pre_aci_doe_pro,Prevention,Occupational health and safety
+Outras Normas de Proteção ao Acidentado ou Doente,Other injury provisions,Other standards for protection of injured workers,cl_out_nor_pro_aci_doe,Protections,Occupational health and safety
+"Outras normas referentes a admissão, demissão e modalidades de contratação",Other contracting,"Other rules regarding admission, dismissal, and contracting",cl_out_nor_ref_adm_dem_mod_con,Other: employment contract,"Employment contract - hiring, separations, contract types"
+Outras normas referentes a condições para o exercício do trabalho,Other rules on working conditions,Other rules regarding conditions for carrying out work functions,cl_out_nor_ref_con_par_exe_tra,Working conditions,"Labor relations - working conditions, staff rules, and employment protections"
+"Outras normas referentes a salários, reajustes, pagamentos e critérios para cálculo",Other wage rules,"Other rules regarding salaries, adjustments, and payments",cl_out_nor_ref_sal_rea_pag_cri_p,"Other: adjustments, payments, wages","Wages, adjustments, and payment"
+Pagamento de Salário – Formas e Prazos,Wage payment,Salary payment - means and timeframes,cl_pag_sal_for_pra,Wage payment,"Wages, adjustments, and payment"
+Participação dos Trabalhadores na Gestão das Empresas,Worker participation in management,Employee participation in business management,cl_par_dos_tra_ges_das_emp,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Participação nos Lucros e/ou Resultados,Profit sharing,Profit sharing,cl_par_nos_luc_res,Other income,"Bonuses, pays, assistances, and others"
+Periculosidade,Hazards,Hazard (danger risk),cl_per,Prevention,Occupational health and safety
+Piso Salarial,Wage floors,Minimum wage,cl_pis_sal,Wage adjustment,"Wages, adjustments, and payment"
+Plano de Cargos e Salários,Task-and-wage schedule,Schedule of tasks and wages,cl_pla_car_sal,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Políticas de Manutenção do Emprego,Policies for maintaining employment,Policies for employment maintenance,cl_pol_man_emp,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Política para Dependentes,Policy for dependents,Policy for dependents,cl_pol_par_dep,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Portadores de necessidades especiais,Special needs workforce,People with special needs,cl_por_nec_esp,Hiring,"Employment contract - hiring, separations, contract types"
+Prêmios,Awards,Awards,cl_pre,Other income,"Bonuses, pays, assistances, and others"
+Primeiros Socorros,First aid,First aid,cl_pri_soc,Prevention,Occupational health and safety
+Programa de Proteção ao Emprego (PPE) - Lei nº 13.189/2015,Employment protection program,PPE: employment protection program,cl_pro_pro_emp_ppe_lei_13_201,Employment protections,"Labor relations - working conditions, staff rules, and employment protections"
+Prorrogação/Redução de Jornada,Workday extension/reduction,Extension/reduction of workday,cl_pro_red_jor,Workday,"Workday - duration, distribution, control, absences"
+Procedimentos em Relação a Greves e Grevistas,Strikes,Procedures in relation to strikes and strikers,cl_pro_rel_gre_gre,Union-firm relations,Union relations
+Profissionais de Saúde e Segurança,Health and safety professionals,Health and safety professionals,cl_pro_sau_seg,Prevention,Occupational health and safety
+Qualificação/Formação Profissional,Vocational training,Vocational training/qualification,cl_qua_for_pro,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Readaptação do Acidentado e/ou Portador de Doença Profissional,Rehabilitation of the injured,Rehabilitation of the injured,cl_rea_aci_por_doe_pro,Protections,Occupational health and safety
+Reajustes/Correções Salariais,Wage increases,Salary adjustments/corrections,cl_rea_cor_sal,Wage adjustment,"Wages, adjustments, and payment"
+Regras para a Negociação,CBA negotiation rules,Rules for negotiating,cl_reg_par_neg,General provisions,General provisions
+Remuneração DSR,Weekly rest wage,DSR: weekly rest remuneration,cl_rem_dsr,Other wages,"Wages, adjustments, and payment"
+Remuneração de Férias,Vacation remuneration,Holiday remuneration,cl_rem_fer,Holidays,Holidays and leave
+Renovação/Rescisão do Instrumento Coletivo,CBA renewal/termination,Renewal/termination of the CBA,cl_ren_res_ins_col,General provisions,General provisions
+Representante Sindical,Union representatives,Union representative,cl_rep_sin,Union organization,Union relations
+Salário Família,Family salary,Family salary,cl_sal_fam,Other income,"Bonuses, pays, assistances, and others"
+Salário Estágio/Menor Aprendiz,Intern wage,Internship/apprenticeship salary,cl_sal_gio_men_apr,Other wages,"Wages, adjustments, and payment"
+Salário produção ou tarefa,Production wage,Production or task salary,cl_sal_pro_tar,Other wages,"Wages, adjustments, and payment"
+Seguro de Vida,Life insurance,Life insurance,cl_seg_vid,Other income,"Bonuses, pays, assistances, and others"
+Sindicalização (campanhas e contratação de sindicalizados),Unionization campaigns,Unionization (campaigns and hiring of union members),cl_sin_cam_con_sin,Union organization,Union relations
+Sobreaviso,On-call shifts,On-call,cl_sob,Workday,"Workday - duration, distribution, control, absences"
+Suspensão do Contrato de Trabalho,Suspensions,Suspension of employment contract,cl_sus_con_tra,Separations,"Employment contract - hiring, separations, contract types"
+Transferência setor/empresa,Transfers,Transfers,cl_tra_set_emp,Staffing rules,"Labor relations - working conditions, staff rules, and employment protections"
+Treinamento para Prevenção de Acidentes e Doenças do Trabalho,Training for injury prevention,Training for work-related injury prevention,cl_tre_par_pre_aci_doe_tra,Prevention,Occupational health and safety
+Turnos Ininterruptos de Revezamento,Uninterrupted shifts,Uninterrupted shifts,cl_tur_ini_rev,Workday,"Workday - duration, distribution, control, absences"
+Uniforme,Uniforms,Uniforms,cl_uni,Prevention,Occupational health and safety
