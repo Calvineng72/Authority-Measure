@@ -9,7 +9,7 @@ import spacy
 from collections import defaultdict
 
 # command to run the file in the terminal
-# python src/main02_parse_articles.py --input_directory cleaned_cba_samples --output_directory output
+# python src/main02_parse_articles.py --input_directory cleaned_cbas --output_directory output
 
 # subject dependencies
 subdeps = {'nsubj', 'nsubj:pass'}
@@ -74,17 +74,19 @@ def parse_article(filename, nlp, args):
     statement_list = []
     filepath = os.path.join(args.input_directory, filename)
 
-    if filename.endswith(".txt"):
-        with open(filepath, 'r', encoding='utf-8') as f:
-            try:
-                art_nlp = nlp(f.read())
-            except Exception as e:
-                print(f"Error occurred: {str(e)}")
-                print(filename)
+    if args.clause:
+        print('here')
 
-        contract_id = os.path.basename(filename) 
-        art_statements = get_statements(art_nlp, contract_id, nlp)
-        statement_list.extend(art_statements)            
+    with open(filepath, 'r', encoding='utf-8') as f:
+        try:
+            art_nlp = nlp(f.read())
+        except Exception as e:
+            print(f"Error occurred: {str(e)}")
+            print(filename)
+
+    contract_id = os.path.basename(filename) 
+    art_statements = get_statements(art_nlp, contract_id, nlp)
+    statement_list.extend(art_statements)            
 
     parses_fpath = os.path.join(args.output_directory, "02_parsed_articles", filename[:-3] + "pkl") 
     joblib.dump(statement_list, parses_fpath)
@@ -239,6 +241,9 @@ def parse_by_subject(sent, nlp):
             data['md'] = 1
 
         datalist.append(data)
+
+        if orignial_stext == 'empregado' and modal_text == '' and helping_verb_text == '' and verb_text == 'fará':
+            print(sent)
     
     return datalist
 
@@ -247,6 +252,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_directory", type=str, default="")
     parser.add_argument("--output_directory", type=str, default="")
+    parser.add_argument("--clause", action='store_true')
+    parser.add_argument("--contract", action='store_true')
     args = parser.parse_args()
 
     try:
@@ -258,6 +265,6 @@ if __name__ == "__main__":
     except:
         pass
 
-    nlp = spacy.load('pt_core_news_sm', disable=["ner"])
+    nlp = spacy.load('pt_core_news_lg', disable=["ner"])
     for filename in tqdm(os.listdir(args.input_directory)):
         parse_article(filename, nlp, args)

@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 
 # command to run the file in the terminal
-# python src/main04_compute_auth.py --input_directory cleaned_cba_samples --output_directory output
+# python src/main04_compute_auth.py --input_directory cleaned_cbas --output_directory output
 
 def combine_auth(args):
     """

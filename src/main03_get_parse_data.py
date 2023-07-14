@@ -8,7 +8,7 @@ import json
 from tqdm import tqdm
 
 # command to run the file in the terminal
-# python src/main03_get_parse_data.py --input_directory cleaned_cba_samples --output_directory output
+# python src/main03_get_parse_data.py --input_directory cleaned_cbas --output_directory output
     
 def extract_pdata(args):
     """

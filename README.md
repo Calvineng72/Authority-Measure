@@ -1,62 +1,34 @@
 # Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements
 
-This is the (partial) code base for our paper [Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements](https://www.research-collection.ethz.ch/handle/20.500.11850/473199.1). For questions regarding the code base, please contact dominik.stammbach@gess.ethz.ch.
+This respository is built upon the research paper titled ["Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements"](https://www.research-collection.ethz.ch/handle/20.500.11850/473199.1) by Elliot Ash, Jeff Jacobs, Bentley MacLeod, Suresh Naidu, and Dominik Stammbach. The original code base can be found [here](https://github.com/dominiksinsaarland/labor-contracts). The pipeline is adapted for Brazilian collective bargaining agreements with modifications to the parsing algorithm and dictionaries to accomodate the Portuguese language.  
 
-The code base covers:
+The repository covers the following:
+* Parsing Documents in Portuguese
+* Computing Authority Scores on Statement Level
+* Aggregating authority scores on Contract Level
 
-* Parsing articles
-* Computing Authority Scores on statement level
-* Aggregating authority scores on contract level
+The main output of the pipeline is the file $output_directory/05_aggregated.csv, which contains information for each document on the number of obligations, permissions, entitlements, and constraints for each agent type. 
 
-The main output files of the pipeline are:
+## Getting Started
 
-* $output_directory/04_auth.pkl (contains all entitlements/obligations/constraints/permissions per clause-level)
-* $output_directory/05_aggregated.pkl (contains aggregated scores by different subjects on contract-level)
-
-## Installation
-
-Assuming [Anaconda](https://docs.anaconda.com/anaconda/install/) and linux, the environment can be installed with the following command:
+Assuming [Anaconda](https://docs.anaconda.com/anaconda/install/) and linux, the environment can be installed with the following commands:
 ```shell
-conda create -n labor-contracts python=3.6
+conda create -n labor-contracts python=3.9.13
 conda activate labor-contracts
 pip install -r requirements.txt
+pip install spacy==3.5.4
+python -m spacy download pt_core_news_sm
 ```
 
-### Installing spaCy and linking with neuralcoref
+## Running the Pipeline
 
-Installing spaCy and linking with neuralcoref does not work out of the box on linux, the following steps eventually worked
-
-```shell
-git clone https://github.com/huggingface/neuralcoref.git
-cd neuralcoref
-pip install -r requirements.txt
-pip install -e .
-pip install spacy==2.3.2
-python -m spacy download en
-```
-
-## Run the pipeline
-
-The pipeline covers two types of input. In any case, input is a directory containing each contract, either as a .txt file or as a .json file.
-
-* if input is json, each contract should already be split into "articles", and contain a contract_id.
-* else, rights and duties are computed on contract level, and the filename becomes the article_id
-
-Output will be stored in output_directory, the main output there is the file 04_auth.pkl. For each subject-verb tuple, it contains a boolean value whether it is an entitlement, obligation etc. and saves the "role" of the subject (worker, firm etc.). These results can then be aggregated at any desired level. Intermediate pipeline steps will get saved as well in the output directory.
+The pipeline accepts cleaned .txt files, where the file name is the contract ID for a given CBA. The input_directory should be the name of the folder containing the cleaned documents. In order to run the pipeline, run the following command:
 
 ```shell
-input_directory="sample_data"
-output_directory="output_sample_data"
+input_directory="cleaned_cbas"
+output_directory="output"
 python src/pipeline.py --input_directory $input_directory --output_directory $output_directory
 ```
 
-Our results in the paper are computed with coreferences resolved. However, setting up neuralcoref spacy in 2022 is somewhat cumbersome and the whole process is computationally expensive. If coreference resolution is desired, install neural_coref and run the pipeline with the flug --use_neural_coref 
-
-```shell
-input_directory="path/to/directory/with/contracts"
-output_directory="authority_measures"
-python src/pipeline.py --use_neural_coref --input_directory $input_directory --output_directory $output_directory
-```
-
-## What probably needs to be customized for other contract collections
-* We were interested in very specific roles, e.g. worker, firm etc. This is simply a dictionary lookup of the subject of a clause, e.g. following words are considered to be *worker*: worker="employee,worker,staff,teacher,nurse,mechanic,operator,steward,personnel" Overwrite these for customized applications in the file main04_compute_auth.py
+## References
+E. Ash, J. Jacobs, B. MacLeod, S. Naidu and D. Stammbach, "Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements," *2020 International Conference on Data Mining Workshops (ICDMW)*, Sorrento, Italy, 2020, pp. 766-774, doi: 10.1109/ICDMW51313.2020.00112.
