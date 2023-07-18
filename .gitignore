@@ -1,9 +1,6 @@
-neuralcoref
-cba_samples
 cleaned_cbas
-old_sample_data
-output
-old_src
-data_analysis.ipynb
+cleaned_cbas_clause
 cba_samples_small
 cleaned_cba_samples_small
+output
+data_analysis.ipynb

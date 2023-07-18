@@ -44,6 +44,8 @@ def extract_pdata(args):
                               'modal': statement_data['modal'], 'mlem': statement_data['mlem'],
                               'md': statement_data['md'], 'neg': statement_data['neg'],
                               'slem': statement_data['slem']}
+            if args.clause:
+                statement_dict['clause_name'] = statement_data['clause_name']
 
             pdata_rows.append(statement_dict)
 

@@ -6,6 +6,7 @@ from tqdm import tqdm
 import joblib
 import io
 import spacy
+import re
 from collections import defaultdict
 
 # command to run the file in the terminal
@@ -23,14 +24,13 @@ modal_verbs = {'dever', 'deverá', 'deverão', 'deve', 'devem', 'poder', 'poder�
 # auxillary verbs to check for
 auxillary_verbs = {'ir', 'haver', 'houverem', 'ter', 'tiverem'}
  
-def get_statements(art_nlp, contract_id, nlp):
+def get_statements(article_nlp, nlp):
     """
     Extracts statements from the given article's spaCy parsed document.
 
     Arguments:
-        art_nlp: spaCy parsed document of the article
-        contract_id: contract ID associated with the article
-        art_num: article number
+        article_nlp: spaCy parsed document of the article
+        nlp (spacy.Language): Spacy NLP model for text processing
 
     Returns:
         list of dictionaries, each containing the extracted statement data
@@ -39,23 +39,15 @@ def get_statements(art_nlp, contract_id, nlp):
     """
     statement_list = []
     
-    # for sentence_num, sent in enumerate(art_nlp.sents):
-    for sent in art_nlp.sents:
-        tokcheck = str(sent).split()
+    for sentence in article_nlp.sents:
+        tokens = str(sentence).split()
 
         # checks if statement is less than three tokens
-        if len(tokcheck) < 3:
+        if len(tokens) < 3:
             continue
         
-        sent_statements = parse_by_subject(sent, nlp)
-        
-        # for statement_num, statement_data in enumerate(sent_statements):
-        for statement_data in sent_statements:
-            full_data = statement_data.copy()
-            full_data.update({
-                'contract_id': contract_id,
-            })
-            statement_list.append(full_data)
+        sentence_statements = parse_by_subject(sentence, nlp)
+        statement_list.extend(sentence_statements)
             
     return statement_list
 
@@ -65,7 +57,7 @@ def parse_article(filename, nlp, args):
 
     Arguments:
         filename (str): name of the article file
-        nlp (spacy.Language): Spacy NLP model for text processing.
+        nlp (spacy.Language): Spacy NLP model for text processing
         args (argparse.Namespace): command-line arguments
 
     Returns:
@@ -73,20 +65,33 @@ def parse_article(filename, nlp, args):
     """
     statement_list = []
     filepath = os.path.join(args.input_directory, filename)
+    contract_id = re.sub(r"_cleaned\.txt$", "", os.path.basename(filename))
 
     if args.clause:
-        print('here')
+        with open(filepath, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            for clause in data:
+                try:
+                    clause_nlp = nlp(clause[1])
+                except Exception as e:
+                    print(f"Error occurred: {str(e)}")
+                    print(filename)
+                clause_statements = get_statements(clause_nlp, nlp)
+                for statement in clause_statements:
+                    statement['clause_name'] = clause[0]
+                statement_list.extend(clause_statements)  
+    else:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            try:
+                art_nlp = nlp(f.read())
+            except Exception as e:
+                print(f"Error occurred: {str(e)}")
+                print(filename)
+        art_statements = get_statements(art_nlp, nlp)
+        statement_list.extend(art_statements)        
 
-    with open(filepath, 'r', encoding='utf-8') as f:
-        try:
-            art_nlp = nlp(f.read())
-        except Exception as e:
-            print(f"Error occurred: {str(e)}")
-            print(filename)
-
-    contract_id = os.path.basename(filename) 
-    art_statements = get_statements(art_nlp, contract_id, nlp)
-    statement_list.extend(art_statements)            
+    for statement in statement_list:
+        statement['contract_id'] = contract_id    
 
     parses_fpath = os.path.join(args.output_directory, "02_parsed_articles", filename[:-3] + "pkl") 
     joblib.dump(statement_list, parses_fpath)
@@ -241,9 +246,6 @@ def parse_by_subject(sent, nlp):
             data['md'] = 1
 
         datalist.append(data)
-
-        if orignial_stext == 'empregado' and modal_text == '' and helping_verb_text == '' and verb_text == 'fará':
-            print(sent)
     
     return datalist
 
@@ -253,7 +255,6 @@ if __name__ == "__main__":
     parser.add_argument("--input_directory", type=str, default="")
     parser.add_argument("--output_directory", type=str, default="")
     parser.add_argument("--clause", action='store_true')
-    parser.add_argument("--contract", action='store_true')
     args = parser.parse_args()
 
     try:
@@ -265,6 +266,6 @@ if __name__ == "__main__":
     except:
         pass
 
-    nlp = spacy.load('pt_core_news_lg', disable=["ner"])
+    nlp = spacy.load('pt_core_news_sm', disable=["ner"])
     for filename in tqdm(os.listdir(args.input_directory)):
         parse_article(filename, nlp, args)

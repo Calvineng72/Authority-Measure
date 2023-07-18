@@ -1,4 +1,4 @@
-# Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements
+# Title
 
 This respository is built upon the research paper titled ["Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements"](https://www.research-collection.ethz.ch/handle/20.500.11850/473199.1) by Elliot Ash, Jeff Jacobs, Bentley MacLeod, Suresh Naidu, and Dominik Stammbach. The original code base can be found [here](https://github.com/dominiksinsaarland/labor-contracts). The pipeline is adapted for Brazilian collective bargaining agreements with modifications to the parsing algorithm and dictionaries to accomodate the Portuguese language.  
 
@@ -13,8 +13,8 @@ The main output of the pipeline is the file $output_directory/05_aggregated.csv,
 
 Assuming [Anaconda](https://docs.anaconda.com/anaconda/install/) and linux, the environment can be installed with the following commands:
 ```shell
-conda create -n labor-contracts python=3.9.13
-conda activate labor-contracts
+conda create -n authority_measure python=3.9.13
+conda activate authority_measure
 pip install -r requirements.txt
 pip install spacy==3.5.4
 python -m spacy download pt_core_news_sm

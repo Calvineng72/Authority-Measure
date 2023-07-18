@@ -118,7 +118,7 @@ def compute_statement_auth(args, df, filename):
     Returns:
         None
     """
-    vars_to_keep = ["contract_id", "slem", "subject", "verb", "vlem",
+    vars_to_keep = ["contract_id", "clause_name", "slem", "subject", "verb", "vlem",
                     "modal", "mlem", "md", "helping_verb", "passive", "neg"]
 
     df = df[vars_to_keep]
@@ -166,8 +166,8 @@ def compute_statement_auth(args, df, filename):
 
     # # verbs to be removed and classified as an 'other provision'
     # df['to_remove'] = (df_notpassive & df['vlem'].isin({'fazer', 'fará', 'farão', 'faz', 'fazem', 'estar', 'estará', 'estarão', 
-    #                                                     'está', 'estão', 'ser', 'será', 'serão', 'é', 'são' 'ficar', 'ficará', 
-    #                                                     'ficarão' 'fica', 'ficam'})).astype('bool') 
+    #                                                     'está', 'estão', 'ser', 'será', 'serão', 'é', 'são', 'ficar', 'ficará', 
+    #                                                     'ficarão', 'fica', 'ficam'})).astype('bool') 
 
     # special verbs
     df['special_verb'] = (df['obligation_verb'] | df['constraint_verb'] | df['permission_verb'] | df['entitlement_verb'] | df['promise_verb']).astype('bool')

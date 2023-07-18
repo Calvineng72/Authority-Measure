@@ -9,8 +9,9 @@ from main04_compute_auth import combine_auth, compute_statement_auth
 import pandas as pd
 import numpy as np
 
-# command to run the file in the terminal
+# commands to run the file in the terminal
 # python src/pipeline.py --input_directory cleaned_cbas --output_directory output
+# python src/pipeline.py --input_directory cleaned_cbas_clause --output_directory output --clause
 
 pd.options.mode.chained_assignment = None
 
@@ -18,7 +19,7 @@ class Pipeline():
 	def __init__(self, args):
 		self.args = args
 		os.makedirs(self.args.output_directory, exist_ok=True)
-		self.nlp = spacy.load('pt_core_news_lg', disable=["ner"])
+		self.nlp = spacy.load('pt_core_news_sm', disable=["ner"])
 
 	def parse_articles(self):
 		for filename in tqdm(os.listdir(args.input_directory)):
@@ -79,7 +80,7 @@ class Pipeline():
 
 	def aggregate_measures(self):
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))		
-		to_keep = ['contract_id', 'md', 'passive', 'neg', 'strict_modal', 'permissive_modal', 'obligation_verb', 
+		to_keep = ['contract_id', 'clause_name', 'md', 'passive', 'neg', 'strict_modal', 'permissive_modal', 'obligation_verb', 
 	     	'constraint_verb', 'permission_verb', 'entitlement_verb', 'promise_verb', 'special_verb', 'active_verb', 
 			'obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'subnorm']
 		df = df[to_keep]
@@ -99,13 +100,21 @@ class Pipeline():
 		for cur_subnorm in all_subjects:
 			df[cur_subnorm + "_count"] = [1 if i == cur_subnorm else 0 for i in df["subnorm"]]
 
+		# removes the 'subnorm' column
+		df.drop("subnorm", axis=1, inplace=True)
+
 		# creates statement count, sums by contract ID, and cleans contract ID
 		df["num_statements"] = [1] * len(df)
-		df = df.groupby("contract_id", as_index=False).sum()
-		df["contract_id"] = df["contract_id"].str.replace("_cleaned.txt", "", regex=True)
+		if self.args.clause:
+			df = df.groupby(["contract_id", "clause_name"], as_index=False).sum()
+		else:
+			df = df.groupby("contract_id", as_index=False).sum()
 
 		# converts values to integers
-		columns_to_convert = df.columns.difference(['contract_id'])
+		if self.args.clause:
+			columns_to_convert = df.columns.difference(['contract_id', 'clause_name'])
+		else:
+			columns_to_convert = df.columns.difference(['contract_id'])
 		df[columns_to_convert] = df[columns_to_convert].astype(int)
 
 		# saves DataFrame as a CSV without indices
@@ -133,7 +142,6 @@ if __name__ == "__main__":
 	parser.add_argument("--input_directory", type=str, default="sample_data")
 	parser.add_argument("--output_directory", type=str, default="output_sample_data")
 	parser.add_argument("--clause", action='store_true')
-	parser.add_argument("--contract", action='store_true')
 	args = parser.parse_args()
 	pipeline = Pipeline(args)
 	pipeline.run_main()

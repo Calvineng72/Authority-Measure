@@ -1,5 +1,4 @@
 joblib
-json
 pandas
 numpy
 tqdm
