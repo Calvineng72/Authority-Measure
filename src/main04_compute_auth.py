@@ -118,8 +118,12 @@ def compute_statement_auth(args, df, filename):
     Returns:
         None
     """
-    vars_to_keep = ["contract_id", "clause_name", "slem", "subject", "verb", "vlem",
-                    "modal", "mlem", "md", "helping_verb", "passive", "neg"]
+    if args.clause:
+        vars_to_keep = ["contract_id", "clause_name", "slem", "subject", "verb", "vlem",
+                        "modal", "mlem", "md", "helping_verb", "passive", "neg"]
+    else:
+        vars_to_keep = ["contract_id", "slem", "subject", "verb", "vlem",
+                        "modal", "mlem", "md", "helping_verb", "passive", "neg"] 
 
     df = df[vars_to_keep]
     df["md"] = df["md"].astype('bool')

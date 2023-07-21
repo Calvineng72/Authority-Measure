@@ -80,7 +80,12 @@ class Pipeline():
 
 	def aggregate_measures(self):
 		df = pd.read_pickle(os.path.join(self.args.output_directory, "04_auth.pkl"))		
-		to_keep = ['contract_id', 'clause_name', 'md', 'passive', 'neg', 'strict_modal', 'permissive_modal', 'obligation_verb', 
+		if self.args.clause:
+			to_keep = ['contract_id', 'clause_name', 'md', 'passive', 'neg', 'strict_modal', 'permissive_modal', 'obligation_verb', 
+	     	'constraint_verb', 'permission_verb', 'entitlement_verb', 'promise_verb', 'special_verb', 'active_verb', 
+			'obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'subnorm']
+		else:
+			to_keep = ['contract_id', 'md', 'passive', 'neg', 'strict_modal', 'permissive_modal', 'obligation_verb', 
 	     	'constraint_verb', 'permission_verb', 'entitlement_verb', 'promise_verb', 'special_verb', 'active_verb', 
 			'obligation', 'constraint', 'permission', 'entitlement', 'other_provision', 'subnorm']
 		df = df[to_keep]
