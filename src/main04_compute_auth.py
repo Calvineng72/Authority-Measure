@@ -211,7 +211,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_directory", type=str, default="")
     parser.add_argument("--output_directory", type=str, default="")
+    parser.add_argument("--clause", action='store_true')
     args = parser.parse_args()
+    
     try:
         os.mkdir(os.path.join(args.output_directory, "04_auth"))
     except:

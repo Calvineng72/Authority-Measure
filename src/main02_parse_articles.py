@@ -87,8 +87,8 @@ def parse_article(filename, nlp, args):
             except Exception as e:
                 print(f"Error occurred: {str(e)}")
                 print(filename)
-        art_statements = get_statements(art_nlp, nlp)
-        statement_list.extend(art_statements)        
+        article_statements = get_statements(art_nlp, nlp)
+        statement_list.extend(article_statements)        
 
     for statement in statement_list:
         statement['contract_id'] = contract_id    
