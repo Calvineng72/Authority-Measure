@@ -1,6 +1,6 @@
-# Title
+# An Authority Measure for Collective Bargaining Agreements.
 
-This respository is built upon the research paper titled ["Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements"](https://www.research-collection.ethz.ch/handle/20.500.11850/473199.1) by Elliot Ash, Jeff Jacobs, Bentley MacLeod, Suresh Naidu, and Dominik Stammbach. The original code base can be found [here](https://github.com/dominiksinsaarland/labor-contracts). The pipeline is adapted for Brazilian collective bargaining agreements with modifications to the parsing algorithm and dictionaries to accomodate the Portuguese language.  
+This repository is built upon the research paper titled ["Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements"](https://www.research-collection.ethz.ch/handle/20.500.11850/473199.1) by Elliot Ash, Jeff Jacobs, Bentley MacLeod, Suresh Naidu, and Dominik Stammbach. The original code base can be found [here](https://github.com/dominiksinsaarland/labor-contracts). The pipeline is adapted for Brazilian collective bargaining agreements with modifications to the parsing algorithm and dictionaries to accommodate the Portuguese language.  
 
 The repository covers the following:
 * Cleaning Documents (Sample Code)
@@ -14,7 +14,7 @@ Within this repository are sample Jupyter notebooks used to clean collective bar
 
 ## Getting Started
 
-Assuming [Anaconda](https://docs.anaconda.com/anaconda/install/) and linux, the environment can be installed with the following commands:
+Assuming [Anaconda](https://docs.anaconda.com/anaconda/install/) and Linux, the environment can be installed with the following commands:
 ```shell
 conda create -n authority_measure python=3.9.13
 conda activate authority_measure
@@ -33,7 +33,7 @@ output_directory="output"
 python src/pipeline.py --input_directory $input_directory --output_directory $output_directory
 ```
 
-There is also an option to run the pipeline by clause, rather than by document. With this option, the cleaned.txt files must contain a double array, where each interior array is composed of two elements: the clause name and clause text. 
+There is also an option to run the pipeline by clause rather than by document. With this option, the cleaned.txt files must contain a double array, where each interior array is composed of two elements: the clause name and clause text. 
 
 ```shell
 input_directory="cleaned_cbas_clause"
