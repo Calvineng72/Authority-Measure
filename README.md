@@ -7,6 +7,7 @@ The repository covers the following:
 * Parsing Documents in Portuguese
 * Computing Authority Scores on Statement Level
 * Aggregating Authority Scores on Contract Level
+* Extracting Corpus-Wide Subject-Verb Prefixes
 
 The main output of the pipeline is the file $output_directory/05_aggregated.csv, which contains information for each document on the number of obligations, permissions, entitlements, and constraints for each agent type. The pipeline may be run with each document as an observation, or with each clause as an observation, whereby the '--clause' flag is used to specify the latter. 
 
