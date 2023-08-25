@@ -1,4 +1,4 @@
-# An Authority Measure for Collective Bargaining Agreements.
+# An Authority Measure for Brazilian Collective Bargaining Agreements
 
 This repository is built upon the research paper titled ["Unsupervised Extraction of Workplace Rights and Duties from Collective Bargaining Agreements"](https://www.research-collection.ethz.ch/handle/20.500.11850/473199.1) by Elliot Ash, Jeff Jacobs, Bentley MacLeod, Suresh Naidu, and Dominik Stammbach. The original code base can be found [here](https://github.com/dominiksinsaarland/labor-contracts). The pipeline is adapted for Brazilian collective bargaining agreements with modifications to the parsing algorithm and dictionaries to accommodate the Portuguese language.  
 
